@@ -9,18 +9,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.corgicoder.foodtruck.data.Restaurant
 import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
 
 @Composable
 fun Card (
     restaurant: Restaurant,
-    onCardClick: () -> Unit
+    onRestaurantClick: () -> Unit,
 ) {
     Card (
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable(onClick = onCardClick),
+            .clickable(onClick = onRestaurantClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(
             topStart = 16.dp,
@@ -31,7 +32,7 @@ fun Card (
     ){
         CardInfo(
             restaurant = restaurant,
-            showRating = true // Always show rating on card
+            showRating = true, // Always show rating on card
         )
     }
 }

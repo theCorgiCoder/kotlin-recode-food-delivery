@@ -6,7 +6,7 @@ data class Restaurant (
     val rating: Float,
     val showRating: Boolean,
     val filterIds: List<String>,
-    val imageResId: String, //dummy data, remove when api connected
+    val imageResId: Int, //dummy data, remove when api connected
     // val imageUrl: String,
     val deliveryTimeMinutes: Byte
 )

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,8 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.corgicoder.foodtruck.R
+import com.corgicoder.foodtruck.data.Restaurant
+import com.corgicoder.foodtruck.ui.components.icon.CustomIcon
+import com.corgicoder.foodtruck.ui.components.icon.IconType
+import com.corgicoder.foodtruck.ui.components.text.CustomText
 
 @Composable
 fun CardInfo (
@@ -49,32 +54,59 @@ fun CardInfo (
                 )
 
                 if (showRating) {
-                    RatingRow(restaurant.rating)
+                    IconRow(
+                        rating = restaurant.rating,
+                        icon = IconType.ImageVectorIcon(Icons.Default.Star),
+                        iconTint = Color.Yellow,
+                        fontWeight = FontWeight.Bold,
+                        textColor = Color.Black,
+                        fontSize = 18.dp
+                        )
                 }
             }
             TagRow(filterIds = restaurant.filterIds)
+
+            if (showRating){
             val deliveryTime = restaurant.deliveryTimeMinutes
-            Text(text = "$deliveryTime minutes")
+            IconRow(
+                icon = IconType.DrawableResourceIcon(R.drawable.clock_icon),
+                iconTint = Color.Red,
+                fontWeight = FontWeight.Bold,
+                textColor = Color.Black,
+                fontSize = 18.dp,
+                text = "$deliveryTime minutes"
+            )
+                }
+
+
         }
     }
 
 }
 @Composable
-private fun RatingRow(rating: Float) {
+private fun IconRow(
+    rating: Float? = null,
+    icon: IconType,
+    iconTint: Color,
+    text: String? = null,
+    fontSize: Dp,
+    fontWeight: FontWeight = FontWeight.Normal,
+    textColor: Color = Color.Unspecified
+) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = Icons.Default.Star,
+        CustomIcon(
+            icon = icon,
             contentDescription = null,
             modifier = Modifier.size(28.dp).padding(end = 3.dp),
-            tint = Color.Yellow
+            tint = iconTint
         )
-        Text(
-            text = "$rating",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.bodyLarge
+        CustomText(
+            text = text ?: rating?.toString() ?: "",
+            textColor = textColor,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
         )
     }
 }

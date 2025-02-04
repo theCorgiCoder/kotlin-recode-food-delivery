@@ -31,7 +31,7 @@ fun DetailsScreen(
         )
         restaurant?.let {
             CardInfo(restaurant = it, showRating = false)
-
+//testing
         }
     }
 }

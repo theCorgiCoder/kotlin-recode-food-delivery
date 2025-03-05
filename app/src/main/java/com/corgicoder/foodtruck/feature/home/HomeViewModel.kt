@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.corgicoder.foodtruck.data.RetrofitClient
 import com.corgicoder.foodtruck.data.model.Filter
 import com.corgicoder.foodtruck.data.model.Restaurant
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -20,8 +21,9 @@ class HomeViewModel : ViewModel() {
     val filtersData: StateFlow<Map<String, Filter>> get() = _filtersData
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch (Dispatchers.IO){
             getRestaurants()
+            fetchFiltersParallel()
         }
     }
 
@@ -31,13 +33,6 @@ class HomeViewModel : ViewModel() {
            val restaurants = restaurantList.restaurants
            _restaurantsData.value = restaurants
 
-           //Extract unique filter IDs
-           val uniqueFilterIds = extractUniqueFilterIds(restaurants)
-           Log.d("HomeViewModel IDs", "Unique Filter IDs: $uniqueFilterIds")
-
-           //fetch filters for each unique ID
-           fetchFiltersParallel(uniqueFilterIds)
-
 
            Log.d("HomeViewModel", "Fetched ${restaurants.size} restaurants")
        } catch (e: Exception) {
@@ -45,30 +40,37 @@ class HomeViewModel : ViewModel() {
        }
     }
 
-    private fun extractUniqueFilterIds(restaurants: List<Restaurant>): List<String> {
-        return restaurants
-            .flatMap { it.filterIds } // Ensure 'restaurants' is a List<Restaurant>
-            .distinct()
+    private suspend fun fetchFilters(): List<Filter> {
+        return try {
+            val response = RetrofitClient.restaurantAPIService.getFilters()
+
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("HomeViewModel", "Failed to fetch filters: ${response.errorBody()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("HomeViewModel Fetch filterIds", "Error fetching filter IDs", e)
+            emptyList()
+        }
     }
 
-    private suspend fun fetchFiltersParallel(filterIds: List<String>) {
-        val filterMap = mutableMapOf<String, Filter>()
+    private suspend fun fetchFiltersParallel() {
+        try {
+            //Fetch all filters at once
+            val filters = fetchFilters()
 
-        coroutineScope {
-            val deferredFilters = filterIds.map { id ->
-                async {
-                    try {
-                        val filter = RetrofitClient.restaurantAPIService.getFilterById(id)
-                        filterMap[id] = filter
-                    } catch (e: Exception) {
-                        Log.e("HomeViewModel", "Error fetching filter with ID: $id", e)
-                    }
-                }
-            }
-            deferredFilters.awaitAll()
+            // Convert the list of filters to a map with ID
+            val filterMap = filters.associateBy { it.id }
+
+            //Update the state with the fetched filters
+            _filtersData.value= filterMap
+
+            Log.d("HomeViewModel", "Fetched ${filters.size} filters")
+        } catch (e: Exception) {
+            Log.e("HomeViewModel", "Error fetching filters", e)
         }
-
-        _filtersData.value = filterMap
     }
 }
 

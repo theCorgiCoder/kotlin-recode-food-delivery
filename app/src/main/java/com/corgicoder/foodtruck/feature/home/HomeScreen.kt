@@ -25,7 +25,7 @@ fun HomeScreen(
 
     Column() {
         Row {
-  //filterbar here
+        FilterBar(filters = filters.values.toList()) {}
         }
         LazyColumn {
             items(restaurants) { restaurant ->

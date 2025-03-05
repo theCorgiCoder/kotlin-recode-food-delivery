@@ -8,13 +8,13 @@ import androidx.compose.ui.unit.dp
 import com.corgicoder.foodtruck.data.model.Filter
 
 @Composable
-fun FilterBar(filterIds: List<String>, onFilterClick: (Filter) -> Unit){
+fun FilterBar(filters: List<Filter>, onFilterClick: (Filter) -> Unit){
     Row (modifier = Modifier.padding(8.dp)){
-        filterIds.forEach { filterId ->
+        filters.forEach { filter ->
             FilterButton(
-                name = filterId.name,
-                imageUrl = filterId.imageUrl,
-                onClick = { onFilterClick(filterId)}
+                name = filter.name,
+                imageUrl = filter.imageUrl,
+                onClick = { onFilterClick(filter)}
             )
         }
     }

@@ -23,6 +23,10 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     private final AbstractExternalDependencyFactory owner = this;
     private final AndroidxLibraryAccessors laccForAndroidxLibraryAccessors = new AndroidxLibraryAccessors(owner);
+    private final CoilLibraryAccessors laccForCoilLibraryAccessors = new CoilLibraryAccessors(owner);
+    private final MoshiLibraryAccessors laccForMoshiLibraryAccessors = new MoshiLibraryAccessors(owner);
+    private final OkhttpLibraryAccessors laccForOkhttpLibraryAccessors = new OkhttpLibraryAccessors(owner);
+    private final RetrofitLibraryAccessors laccForRetrofitLibraryAccessors = new RetrofitLibraryAccessors(owner);
     private final VersionAccessors vaccForVersionAccessors = new VersionAccessors(providers, config);
     private final BundleAccessors baccForBundleAccessors = new BundleAccessors(objects, providers, config, attributesFactory, capabilityNotationParser);
     private final PluginAccessors paccForPluginAccessors = new PluginAccessors(providers, config);
@@ -47,6 +51,34 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
      */
     public AndroidxLibraryAccessors getAndroidx() {
         return laccForAndroidxLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>coil</b>
+     */
+    public CoilLibraryAccessors getCoil() {
+        return laccForCoilLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>moshi</b>
+     */
+    public MoshiLibraryAccessors getMoshi() {
+        return laccForMoshiLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>okhttp</b>
+     */
+    public OkhttpLibraryAccessors getOkhttp() {
+        return laccForOkhttpLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>retrofit</b>
+     */
+    public RetrofitLibraryAccessors getRetrofit() {
+        return laccForRetrofitLibraryAccessors;
     }
 
     /**
@@ -76,6 +108,7 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         private final AndroidxCoreLibraryAccessors laccForAndroidxCoreLibraryAccessors = new AndroidxCoreLibraryAccessors(owner);
         private final AndroidxEspressoLibraryAccessors laccForAndroidxEspressoLibraryAccessors = new AndroidxEspressoLibraryAccessors(owner);
         private final AndroidxLifecycleLibraryAccessors laccForAndroidxLifecycleLibraryAccessors = new AndroidxLifecycleLibraryAccessors(owner);
+        private final AndroidxNavigationLibraryAccessors laccForAndroidxNavigationLibraryAccessors = new AndroidxNavigationLibraryAccessors(owner);
         private final AndroidxUiLibraryAccessors laccForAndroidxUiLibraryAccessors = new AndroidxUiLibraryAccessors(owner);
 
         public AndroidxLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
@@ -133,6 +166,13 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          */
         public AndroidxLifecycleLibraryAccessors getLifecycle() {
             return laccForAndroidxLifecycleLibraryAccessors;
+        }
+
+        /**
+         * Group of libraries at <b>androidx.navigation</b>
+         */
+        public AndroidxNavigationLibraryAccessors getNavigation() {
+            return laccForAndroidxNavigationLibraryAccessors;
         }
 
         /**
@@ -210,6 +250,7 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     public static class AndroidxLifecycleLibraryAccessors extends SubDependencyFactory {
         private final AndroidxLifecycleRuntimeLibraryAccessors laccForAndroidxLifecycleRuntimeLibraryAccessors = new AndroidxLifecycleRuntimeLibraryAccessors(owner);
+        private final AndroidxLifecycleViewmodelLibraryAccessors laccForAndroidxLifecycleViewmodelLibraryAccessors = new AndroidxLifecycleViewmodelLibraryAccessors(owner);
 
         public AndroidxLifecycleLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
 
@@ -220,11 +261,28 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
             return laccForAndroidxLifecycleRuntimeLibraryAccessors;
         }
 
+        /**
+         * Group of libraries at <b>androidx.lifecycle.viewmodel</b>
+         */
+        public AndroidxLifecycleViewmodelLibraryAccessors getViewmodel() {
+            return laccForAndroidxLifecycleViewmodelLibraryAccessors;
+        }
+
     }
 
     public static class AndroidxLifecycleRuntimeLibraryAccessors extends SubDependencyFactory {
 
         public AndroidxLifecycleRuntimeLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>compose</b> with <b>androidx.lifecycle:lifecycle-runtime-compose</b> coordinates and
+         * with version reference <b>lifecycle</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getCompose() {
+            return create("androidx.lifecycle.runtime.compose");
+        }
 
         /**
          * Dependency provider for <b>ktx</b> with <b>androidx.lifecycle:lifecycle-runtime-ktx</b> coordinates and
@@ -234,6 +292,38 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          */
         public Provider<MinimalExternalModuleDependency> getKtx() {
             return create("androidx.lifecycle.runtime.ktx");
+        }
+
+    }
+
+    public static class AndroidxLifecycleViewmodelLibraryAccessors extends SubDependencyFactory {
+
+        public AndroidxLifecycleViewmodelLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>compose</b> with <b>androidx.lifecycle:lifecycle-viewmodel-compose</b> coordinates and
+         * with version reference <b>lifecycle</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getCompose() {
+            return create("androidx.lifecycle.viewmodel.compose");
+        }
+
+    }
+
+    public static class AndroidxNavigationLibraryAccessors extends SubDependencyFactory {
+
+        public AndroidxNavigationLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>compose</b> with <b>androidx.navigation:navigation-compose</b> coordinates and
+         * with version reference <b>navigationCompose</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getCompose() {
+            return create("androidx.navigation.compose");
         }
 
     }
@@ -332,6 +422,110 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     }
 
+    public static class CoilLibraryAccessors extends SubDependencyFactory {
+
+        public CoilLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>base</b> with <b>io.coil-kt:coil-base</b> coordinates and
+         * with version reference <b>coil</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getBase() {
+            return create("coil.base");
+        }
+
+        /**
+         * Dependency provider for <b>compose</b> with <b>io.coil-kt:coil-compose</b> coordinates and
+         * with version reference <b>coil</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getCompose() {
+            return create("coil.compose");
+        }
+
+    }
+
+    public static class MoshiLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
+
+        public MoshiLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>moshi</b> with <b>com.squareup.moshi:moshi</b> coordinates and
+         * with version reference <b>moshi</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> asProvider() {
+            return create("moshi");
+        }
+
+        /**
+         * Dependency provider for <b>kotlin</b> with <b>com.squareup.moshi:moshi-kotlin</b> coordinates and
+         * with version reference <b>moshi</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getKotlin() {
+            return create("moshi.kotlin");
+        }
+
+    }
+
+    public static class OkhttpLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
+
+        public OkhttpLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>okhttp</b> with <b>com.squareup.okhttp3:okhttp</b> coordinates and
+         * with version reference <b>okhttp</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> asProvider() {
+            return create("okhttp");
+        }
+
+        /**
+         * Dependency provider for <b>logging</b> with <b>com.squareup.okhttp3:logging-interceptor</b> coordinates and
+         * with version reference <b>okhttp</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getLogging() {
+            return create("okhttp.logging");
+        }
+
+    }
+
+    public static class RetrofitLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
+
+        public RetrofitLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>retrofit</b> with <b>com.squareup.retrofit2:retrofit</b> coordinates and
+         * with version reference <b>retrofit</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> asProvider() {
+            return create("retrofit");
+        }
+
+        /**
+         * Dependency provider for <b>moshi</b> with <b>com.squareup.retrofit2:converter-moshi</b> coordinates and
+         * with version reference <b>retrofit</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getMoshi() {
+            return create("retrofit.moshi");
+        }
+
+    }
+
     public static class VersionAccessors extends VersionFactory  {
 
         public VersionAccessors(ProviderFactory providers, DefaultVersionCatalog config) { super(providers, config); }
@@ -355,6 +549,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          * This version was declared in catalog libs.versions.toml
          */
         public Provider<String> getAgp() { return getVersion("agp"); }
+
+        /**
+         * Version alias <b>coil</b> with value <b>2.0.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getCoil() { return getVersion("coil"); }
 
         /**
          * Version alias <b>composeBom</b> with value <b>2024.04.01</b>
@@ -417,6 +621,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         public Provider<String> getKotlin() { return getVersion("kotlin"); }
 
         /**
+         * Version alias <b>lifecycle</b> with value <b>2.7.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getLifecycle() { return getVersion("lifecycle"); }
+
+        /**
          * Version alias <b>lifecycleRuntimeKtx</b> with value <b>2.8.7</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
@@ -425,6 +639,46 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          * This version was declared in catalog libs.versions.toml
          */
         public Provider<String> getLifecycleRuntimeKtx() { return getVersion("lifecycleRuntimeKtx"); }
+
+        /**
+         * Version alias <b>moshi</b> with value <b>1.12.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getMoshi() { return getVersion("moshi"); }
+
+        /**
+         * Version alias <b>navigationCompose</b> with value <b>2.8.6</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getNavigationCompose() { return getVersion("navigationCompose"); }
+
+        /**
+         * Version alias <b>okhttp</b> with value <b>4.9.1</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getOkhttp() { return getVersion("okhttp"); }
+
+        /**
+         * Version alias <b>retrofit</b> with value <b>2.9.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getRetrofit() { return getVersion("retrofit"); }
 
     }
 

@@ -16,7 +16,7 @@ import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
 @Composable
 fun Card (
     restaurant: Restaurant,
-    filters: Map<String, Filter>,
+    filters: List<Filter>,
     showRating: Boolean,
     onRestaurantClick: () -> Unit,
 ) {

@@ -34,7 +34,7 @@ import com.corgicoder.foodtruck.ui.components.text.CustomText
 @Composable
 fun CardInfo (
     restaurant: Restaurant,
-    filters: Map<String, Filter>,
+    filters:  List<Filter>,
     showRating: Boolean = true
 ) {
     Column (
@@ -113,17 +113,15 @@ private fun IconRow(
 }
 
 @Composable
-fun TagRow (filterIds: List<String>, filters: Map<String, Filter>){
+fun TagRow (filterIds: List<String>, filters:  List<Filter>){
     Row (
         modifier = Modifier.horizontalScroll(rememberScrollState())
     ) {
         filterIds.forEach { filterId ->
-            val filter = filters[filterId]
-            if (filter != null) {
-                Text(text = filter.name)
+
+                Text(text = filterId)
             }
         }
-    }
 }
 
 

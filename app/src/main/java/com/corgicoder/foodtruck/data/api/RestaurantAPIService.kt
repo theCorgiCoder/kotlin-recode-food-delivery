@@ -2,7 +2,6 @@ package com.corgicoder.foodtruck.data.api
 
 import com.corgicoder.foodtruck.data.model.Filter
 import com.corgicoder.foodtruck.data.model.RestaurantList
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -14,5 +13,5 @@ interface RestaurantAPIService {
     suspend fun getRestaurants(): RestaurantList
 
     @GET("filter/{id}")
-    suspend fun getFilters(): Response<List<Filter>>
+    suspend fun getFilters(@Path("id") id: String): Filter
 }

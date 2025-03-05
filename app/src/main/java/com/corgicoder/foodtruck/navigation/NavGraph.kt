@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.corgicoder.foodtruck.feature.details.DetailsScreen
 import com.corgicoder.foodtruck.feature.home.HomeScreen
+import com.corgicoder.foodtruck.feature.home.HomeViewModel
 
 object Route {
     const val HOME = "home"

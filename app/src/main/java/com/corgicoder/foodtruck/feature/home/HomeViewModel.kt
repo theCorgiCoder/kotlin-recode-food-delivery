@@ -10,53 +10,69 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
-    private val _restaurantsData = MutableStateFlow<List<Restaurant>>(emptyList())
-    val restaurants: StateFlow<List<Restaurant>> get() = _restaurantsData
 
-    private val _filtersData = MutableStateFlow<Map<String, Filter>>(emptyMap())
-    val filtersData: StateFlow<Map<String, Filter>> get() = _filtersData
+    lateinit var restaurants: List<Restaurant>
+    lateinit var filtersData: List<Filter>
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     init {
         viewModelScope.launch (Dispatchers.IO){
-            getRestaurants()
-            fetchFiltersParallel()
+            fetchData()
+        }
+    }
+
+    private suspend fun fetchData() {
+        _isLoading.value = true
+        try {
+           getRestaurants()
+        } catch (e: Exception) {
+            Log.e("HomeViewModel", "Error fetching data", e)
+        }
+        finally {
+            _isLoading.value = false
         }
     }
 
     private suspend fun getRestaurants() {
-       try {
+      try {
            val restaurantList = RetrofitClient.restaurantAPIService.getRestaurants()
-           val restaurants = restaurantList.restaurants
-           _restaurantsData.value = restaurants
-
-
+           restaurants = restaurantList.restaurants
            Log.d("HomeViewModel", "Fetched ${restaurants.size} restaurants")
+
        } catch (e: Exception) {
            Log.e("HomeViewModel", "Error fetching restaurants", e)
+
        }
     }
-
-    private suspend fun fetchFilters(): List<Filter> {
-        return try {
-            val response = RetrofitClient.restaurantAPIService.getFilters()
-
-            if (response.isSuccessful) {
-                response.body() ?: emptyList()
+/*
+    private suspend fun fetchFilters() {
+        try {
+            if (::restaurants.isInitialized) {
+                val getRestaurantFilters =
+                    restaurants.flatMap { it.filterIds }.toSet() //creates list that is all unique
+                val filters = coroutineScope {
+                    getRestaurantFilters.map { id ->
+                        async { RetrofitClient.restaurantAPIService.getFilters(id) }
+                    }.awaitAll()
+                }
+                filtersData = filters
             } else {
-                Log.e("HomeViewModel", "Failed to fetch filters: ${response.errorBody()}")
-                emptyList()
+                Log.e("HomeViewModel", "Restaurants not initialized")
             }
         } catch (e: Exception) {
-            Log.e("HomeViewModel Fetch filterIds", "Error fetching filter IDs", e)
-            emptyList()
+                Log.e("HomeViewModel Fetch filterIds", "Error fetching filter IDs", e)
+            filtersData = emptyList()
         }
     }
-
-    private suspend fun fetchFiltersParallel() {
+*/
+   /* private suspend fun fetchFiltersParallel() {
         try {
             //Fetch all filters at once
             val filters = fetchFilters()
@@ -71,7 +87,7 @@ class HomeViewModel : ViewModel() {
         } catch (e: Exception) {
             Log.e("HomeViewModel", "Error fetching filters", e)
         }
-    }
+    } */
 }
 
 

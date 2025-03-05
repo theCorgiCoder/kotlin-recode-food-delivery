@@ -21,8 +21,8 @@ fun DetailsScreen(
     showRating: Boolean,
 ) {
     val viewModel: HomeViewModel = viewModel()
-    val restaurants by viewModel.restaurants.collectAsState()
-    val filters by viewModel.filtersData.collectAsState()
+    val restaurants = viewModel.restaurants
+    val filters = viewModel.filtersData
 
     val restaurant = restaurants.find { it.id == restaurantId }
 

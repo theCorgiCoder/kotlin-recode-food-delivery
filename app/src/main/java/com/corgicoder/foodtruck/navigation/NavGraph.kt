@@ -26,6 +26,7 @@ fun NavGraph () {
     ) {
         composable(Route.HOME) {
             HomeScreen(
+                onFilterClick = {},
                 onRestaurantClick = { restaurant ->
                     navController.navigate(Route.createRestaurantDetailsRoute(restaurant.id))
                 }
@@ -38,6 +39,7 @@ fun NavGraph () {
                     val restaurantId = backStackEntry.arguments?.getString("restaurantId") ?: return@composable
                     DetailsScreen(
                         restaurantId = restaurantId,
+                        showRating = false,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }

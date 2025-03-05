@@ -22,9 +22,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.corgicoder.foodtruck.R
-import com.corgicoder.foodtruck.data.Restaurant
+import com.corgicoder.foodtruck.data.model.Filter
+import com.corgicoder.foodtruck.data.model.Restaurant
 import com.corgicoder.foodtruck.ui.components.icon.CustomIcon
 import com.corgicoder.foodtruck.ui.components.icon.IconType
 import com.corgicoder.foodtruck.ui.components.text.CustomText
@@ -32,14 +34,15 @@ import com.corgicoder.foodtruck.ui.components.text.CustomText
 @Composable
 fun CardInfo (
     restaurant: Restaurant,
+    filters: Map<String, Filter>,
     showRating: Boolean = true
 ) {
     Column (
         modifier = Modifier.height(300.dp),
     ){
-        Image(
-            painter = painterResource(id = restaurant.imageResId),
-            contentDescription = null,
+        AsyncImage(
+            model = restaurant.imageUrl,
+            contentDescription = "Image of ${restaurant.name}",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth().height(200.dp)
         )
@@ -49,7 +52,7 @@ fun CardInfo (
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = restaurant.name,
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -64,7 +67,7 @@ fun CardInfo (
                         )
                 }
             }
-            TagRow(filterIds = restaurant.filterIds)
+           TagRow(filterIds = restaurant.filterIds, filters = filters)
 
             if (showRating){
             val deliveryTime = restaurant.deliveryTimeMinutes
@@ -76,9 +79,7 @@ fun CardInfo (
                 fontSize = 18.dp,
                 text = "$deliveryTime minutes"
             )
-                }
-
-
+            }
         }
     }
 
@@ -112,12 +113,15 @@ private fun IconRow(
 }
 
 @Composable
-fun TagRow (filterIds: List<String>){
+fun TagRow (filterIds: List<String>, filters: Map<String, Filter>){
     Row (
         modifier = Modifier.horizontalScroll(rememberScrollState())
     ) {
         filterIds.forEach { filterId ->
-            Text(text = filterId)
+            val filter = filters[filterId]
+            if (filter != null) {
+                Text(text = filter.name)
+            }
         }
     }
 }

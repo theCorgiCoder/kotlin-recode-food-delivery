@@ -9,12 +9,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.corgicoder.foodtruck.data.Restaurant
+import com.corgicoder.foodtruck.data.model.Filter
+import com.corgicoder.foodtruck.data.model.Restaurant
 import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
 
 @Composable
 fun Card (
     restaurant: Restaurant,
+    filters: Map<String, Filter>,
+    showRating: Boolean,
     onRestaurantClick: () -> Unit,
 ) {
     Card (
@@ -32,7 +35,8 @@ fun Card (
     ){
         CardInfo(
             restaurant = restaurant,
-            showRating = true, // Always show rating on card
+            filters = filters,
+            showRating = showRating, // Always show rating on card
         )
     }
 }

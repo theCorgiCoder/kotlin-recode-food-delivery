@@ -1,6 +1,5 @@
-package com.corgicoder.foodtruck.data
+package com.corgicoder.foodtruck.data.api
 
-import com.corgicoder.foodtruck.data.api.RestaurantAPIService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient

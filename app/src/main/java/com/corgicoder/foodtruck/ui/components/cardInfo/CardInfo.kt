@@ -1,9 +1,9 @@
 package com.corgicoder.foodtruck.ui.components.cardInfo
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,43 +16,45 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.corgicoder.foodtruck.R
-import com.corgicoder.foodtruck.data.model.Filter
-import com.corgicoder.foodtruck.data.model.Restaurant
+import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.ui.components.icon.CustomIcon
 import com.corgicoder.foodtruck.ui.components.icon.IconType
 import com.corgicoder.foodtruck.ui.components.text.CustomText
 
 @Composable
 fun CardInfo (
-    restaurant: Restaurant,
-    filters: Map<String, Filter>,
+    restaurant: RestaurantData,
+    filters:  List<String>,
     showRating: Boolean = true
 ) {
     Column (
-        modifier = Modifier.height(300.dp),
     ){
         AsyncImage(
             model = restaurant.imageUrl,
             contentDescription = "Image of ${restaurant.name}",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().height(200.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
         )
         Column (
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(
                     text = restaurant.name,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -63,21 +65,24 @@ fun CardInfo (
                         iconTint = Color.Yellow,
                         fontWeight = FontWeight.Bold,
                         textColor = Color.Black,
-                        fontSize = 18.dp
+                        fontSize = 16.dp
                         )
                 }
             }
-           TagRow(filterIds = restaurant.filterIds, filters = filters)
+            Spacer(modifier = Modifier.height(8.dp))
 
-            if (showRating){
-            val deliveryTime = restaurant.deliveryTimeMinutes
+            TagRow(filterNames = filters)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (showRating && restaurant.deliveryTimeMinutes != null){
             IconRow(
                 icon = IconType.DrawableResourceIcon(R.drawable.clock_icon),
                 iconTint = Color.Red,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 textColor = Color.Black,
-                fontSize = 18.dp,
-                text = "$deliveryTime minutes"
+                fontSize = 14.dp,
+                text = "${restaurant.deliveryTimeMinutes} minutes"
             )
             }
         }
@@ -96,11 +101,14 @@ private fun IconRow(
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 2.dp)
     ) {
         CustomIcon(
             icon = icon,
             contentDescription = null,
-            modifier = Modifier.size(28.dp).padding(end = 3.dp),
+            modifier = Modifier
+                .size(24.dp)
+                .padding(end = 4.dp),
             tint = iconTint
         )
         CustomText(
@@ -113,14 +121,25 @@ private fun IconRow(
 }
 
 @Composable
-fun TagRow (filterIds: List<String>, filters: Map<String, Filter>){
+fun TagRow (filterNames: List<String>){
     Row (
-        modifier = Modifier.horizontalScroll(rememberScrollState())
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        filterIds.forEach { filterId ->
-            val filter = filters[filterId]
-            if (filter != null) {
-                Text(text = filter.name)
+        filterNames.forEachIndexed { index, filterName ->
+                 Text(
+                     text = filterName,
+                     modifier = Modifier.padding(end = 4.dp)
+                )
+
+            // Add bullet circle between items (not after the last item)
+            if (index < filterNames.size - 1) {
+                Text(
+                    text = " • ", // Bullet with spaces on both sides
+                )
             }
         }
     }

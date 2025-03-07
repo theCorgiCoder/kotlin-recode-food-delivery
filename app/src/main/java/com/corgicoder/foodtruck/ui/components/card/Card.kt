@@ -9,14 +9,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.corgicoder.foodtruck.data.model.Filter
-import com.corgicoder.foodtruck.data.model.Restaurant
+import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
 
 @Composable
 fun Card (
-    restaurant: Restaurant,
-    filters: Map<String, Filter>,
+    restaurant: RestaurantData,
+    filters: List<String>,
     showRating: Boolean,
     onRestaurantClick: () -> Unit,
 ) {

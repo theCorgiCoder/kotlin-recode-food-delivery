@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,9 +16,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.ui.components.card.Card
 import com.corgicoder.foodtruck.ui.components.filter.FilterBar
+import com.corgicoder.foodtruck.ui.components.header.Header
 
 @Composable
 fun HomeScreen(
@@ -45,6 +48,12 @@ fun HomeScreen(
             )
         } else if (!isLoading && restaurants.isNotEmpty()){
             Column() {
+                Spacer(modifier = Modifier.padding(top = 34.dp))
+                Header(modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .zIndex(1f)
+                )
+                Box(modifier = Modifier.zIndex(0f)) {
                 Row {
                    // FilterBar(filters = filters) {}
                 }
@@ -58,6 +67,7 @@ fun HomeScreen(
                         )
                     }
                 }
+                    }
             }
         }
     }

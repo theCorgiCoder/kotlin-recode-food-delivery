@@ -1,93 +1,159 @@
 package com.corgicoder.foodtruck.feature.home
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.corgicoder.foodtruck.data.RetrofitClient
-import com.corgicoder.foodtruck.data.model.Filter
-import com.corgicoder.foodtruck.data.model.Restaurant
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.toList
+import com.corgicoder.foodtruck.data.model.FilterData
+import com.corgicoder.foodtruck.data.model.RestaurantData
+import com.corgicoder.foodtruck.data.model.RestaurantWithFilterNames
+import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
+    //Calling RestaurantRepo to fetch data
+    private val restaurantRepository: RestaurantRepository = RestaurantRepository()
 
-    lateinit var restaurants: List<Restaurant>
-    lateinit var filtersData: List<Filter>
+    //Restaurant Data
+    private val _restaurantData = MutableLiveData<List<RestaurantData>>()
+    val restaurantData: LiveData<List<RestaurantData>> = _restaurantData
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    //Filter Data
+    private val _filters = MutableLiveData<List<FilterData>>()
+    val filters: LiveData<List<FilterData>> = _filters
+
+    //Filtered Restaurant Data
+    private val _filteredRestaurants = MutableLiveData<List<RestaurantData>>()
+    val filteredRestaurants: LiveData<List<RestaurantData>> = _filteredRestaurants
+
+    // Map to store filter ID to filter name mapping
+    private val _filterMap = MutableLiveData<Map<String, String>>()
+    val filterMap: LiveData<Map<String, String>> = _filterMap
+
+    // Restaurant with filter names
+    private val _restaurantsWithFilterNames = MutableLiveData<List<RestaurantWithFilterNames>>()
+    val restaurantsWithFilterNames: LiveData<List<RestaurantWithFilterNames>> = _restaurantsWithFilterNames
+
+    //Loading Status
+    private val _isLoading = MutableLiveData<Boolean>(true)
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> = _error
 
     init {
-        viewModelScope.launch (Dispatchers.IO){
-            fetchData()
-        }
+            loadRestaurants()
     }
 
-    private suspend fun fetchData() {
-        _isLoading.value = true
-        try {
-           getRestaurants()
-        } catch (e: Exception) {
-            Log.e("HomeViewModel", "Error fetching data", e)
-        }
-        finally {
-            _isLoading.value = false
-        }
-    }
+    fun loadRestaurants() {
+        viewModelScope.launch {
+            _isLoading.postValue(true)
+            _error.postValue(null)
 
-    private suspend fun getRestaurants() {
-      try {
-           val restaurantList = RetrofitClient.restaurantAPIService.getRestaurants()
-           restaurants = restaurantList.restaurants
-           Log.d("HomeViewModel", "Fetched ${restaurants.size} restaurants")
+            try {
+                val restaurants = restaurantRepository.fetchRestaurants()
+                val restaurantList = restaurants ?: emptyList()
 
-       } catch (e: Exception) {
-           Log.e("HomeViewModel", "Error fetching restaurants", e)
+                _restaurantData.postValue(restaurantList)
 
-       }
-    }
-/*
-    private suspend fun fetchFilters() {
-        try {
-            if (::restaurants.isInitialized) {
-                val getRestaurantFilters =
-                    restaurants.flatMap { it.filterIds }.toSet() //creates list that is all unique
-                val filters = coroutineScope {
-                    getRestaurantFilters.map { id ->
-                        async { RetrofitClient.restaurantAPIService.getFilters(id) }
-                    }.awaitAll()
-                }
-                filtersData = filters
-            } else {
-                Log.e("HomeViewModel", "Restaurants not initialized")
+                if (restaurantList.isNotEmpty()) {
+                    // After loading restaurants, extract unique filter IDs
+                    loadFilters(restaurantList)
+                } else {
+                    _error.postValue("Failed to fetch restaurant data.")
             }
         } catch (e: Exception) {
-                Log.e("HomeViewModel Fetch filterIds", "Error fetching filter IDs", e)
-            filtersData = emptyList()
+            _error.postValue("An error occurred: ${e.message}")
+                Log.e("HomeViewModel", "Error loading restaurants", e)
+                //set empty list on error
+                _restaurantData.postValue(emptyList())
+
+            } finally {
+                _isLoading.postValue(false)
+            }
         }
     }
-*/
-   /* private suspend fun fetchFiltersParallel() {
-        try {
-            //Fetch all filters at once
-            val filters = fetchFilters()
 
-            // Convert the list of filters to a map with ID
-            val filterMap = filters.associateBy { it.id }
+    // Fetch list of Filter information
+    private fun loadFilters(restaurants: List<RestaurantData>) {
+        viewModelScope.launch {
+            try {
+                //Extract unique IDs from all restaurants
+                val filterIds = restaurants
+                    .flatMap { it.filterIds }
+                    .distinct()
 
-            //Update the state with the fetched filters
-            _filtersData.value= filterMap
+                // Fetch filter data for each ID
+                val filtersList = mutableListOf<FilterData>()
+                val filterIdToNameMap = mutableMapOf<String, String>()
 
-            Log.d("HomeViewModel", "Fetched ${filters.size} filters")
-        } catch (e: Exception) {
-            Log.e("HomeViewModel", "Error fetching filters", e)
+                for (filterId in filterIds) {
+                    val filterData = restaurantRepository.fetchFilterId(filterId)
+                    if(filterData != null) {
+                        filtersList.add(filterData)
+                        // Store the mapping of ID to name
+                        filterIdToNameMap[filterData.id] = filterData.name
+                    }
+                }
+
+                _filters.postValue(filtersList)
+                _filterMap.postValue(filterIdToNameMap)
+
+                // Now create the enhanced restaurant list with filter names
+                createRestaurantsWithFilterNames(restaurants, filterIdToNameMap)
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Error loading filters", e)
+            }
         }
-    } */
+    }
+
+    // Create a list of restaurants with their filter names
+    private fun createRestaurantsWithFilterNames(
+        restaurants: List<RestaurantData>,
+        filterMap: Map<String, String>
+    ) {
+        val enhancedList = restaurants.map { restaurant ->
+            val filterNames = restaurant.filterIds.mapNotNull { filterId ->
+                filterMap[filterId]
+            }
+            RestaurantWithFilterNames(restaurant, filterNames)
+        }
+        _restaurantsWithFilterNames.postValue(enhancedList)
+    }
+
+    // Filter restaurants based on selected filter
+    fun filterByRestaurantFilterId(filterId: String) {
+        val restaurants = _restaurantData.value ?: return
+
+        if (filterId.isEmpty()) {
+            // If no filter selected, show all restaurants
+            _filteredRestaurants.postValue(restaurants)
+        } else {
+            // Filter restaurants that have the selected filter ID
+            val filtered = restaurants.filter { it.filterIds.contains(filterId) }
+            _filteredRestaurants.postValue(filtered)
+        }
+
+        // Also update the enhanced list
+        val filterMap = _filterMap.value ?: emptyMap()
+        createRestaurantsWithFilterNames(
+            _filteredRestaurants.value ?: emptyList(),
+            filterMap
+        )
+    }
+
+    // Get filter name by ID
+    fun getFilterName(filterId: String): String {
+        return _filterMap.value?.get(filterId) ?: "Unknown"
+    }
+
+    // Get all filter names for a restaurant
+    fun getFilterNamesForRestaurant(restaurant: RestaurantData): List<String> {
+        val filterMap = _filterMap.value ?: return emptyList()
+        return restaurant.filterIds.mapNotNull { filterId ->
+            filterMap[filterId]
+        }
+    }
 }
 
 

@@ -31,6 +31,7 @@ import com.corgicoder.foodtruck.ui.components.text.CustomText
 
 @Composable
 fun CardInfo (
+    restaurantId: String,
     restaurant: RestaurantData,
     filters:  List<String>,
     showRating: Boolean = true

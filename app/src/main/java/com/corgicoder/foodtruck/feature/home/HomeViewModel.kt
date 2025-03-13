@@ -35,7 +35,7 @@ class HomeViewModel : ViewModel() {
     val restaurantsWithFilterNames: LiveData<List<RestaurantWithFilterNames>> = _restaurantsWithFilterNames
 
     //Loading Status
-    private val _isLoading = MutableLiveData<Boolean>(true)
+    private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
     private val _error = MutableLiveData<String?>()

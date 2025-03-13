@@ -46,7 +46,7 @@ fun HomeScreen(
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
-        } else if (!isLoading && restaurants.isNotEmpty()){
+        } else if (isLoading && restaurants.isNotEmpty()){
             Column() {
                 Spacer(modifier = Modifier.padding(top = 34.dp))
                 Header(modifier = Modifier

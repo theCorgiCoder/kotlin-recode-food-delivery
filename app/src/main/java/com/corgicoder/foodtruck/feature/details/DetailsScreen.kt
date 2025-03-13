@@ -7,14 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import com.corgicoder.foodtruck.ui.components.button.BackButton
+import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
 
 @Composable
 fun DetailsScreen(
     restaurantId: String?,
-    restaurantRepository: RestaurantRepository,
+    restaurant: RestaurantRepository,
     onNavigateBack: () -> Unit,
     showRating: Boolean,
-
 ) {
 
 
@@ -23,6 +23,7 @@ fun DetailsScreen(
             onNavigateBack = onNavigateBack,
             modifier = Modifier.padding(16.dp)
         )
+       
 
     }
 }

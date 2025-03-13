@@ -47,9 +47,9 @@ fun NavGraph (
                     val restaurantId = backStackEntry.arguments?.getString("restaurantId") ?: return@composable
                     DetailsScreen(
                         restaurantId = restaurantId,
+                        restaurant = restaurantRepository,
                         showRating = false,
                         onNavigateBack = { navController.popBackStack() },
-                        restaurantRepository = restaurantRepository
                     )
                 }
         }

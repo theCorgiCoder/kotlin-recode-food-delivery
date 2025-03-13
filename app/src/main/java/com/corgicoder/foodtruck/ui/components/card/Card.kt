@@ -33,6 +33,7 @@ fun Card (
         )
     ){
         CardInfo(
+            restaurantId = restaurant.id,
             restaurant = restaurant,
             filters = filters,
             showRating = showRating, // Always show rating on card

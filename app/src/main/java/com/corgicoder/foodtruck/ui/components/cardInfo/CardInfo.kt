@@ -34,7 +34,7 @@ fun CardInfo (
     restaurantId: String,
     restaurant: RestaurantData,
     filters:  List<String>,
-    showRating: Boolean = true
+    showRating: Boolean,
 ) {
     Column (
     ){

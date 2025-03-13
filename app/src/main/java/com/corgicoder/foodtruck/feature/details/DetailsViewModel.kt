@@ -1,6 +1,5 @@
 package com.corgicoder.foodtruck.feature.details
 
-import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
@@ -8,8 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.util.Log
-import androidx.media3.common.util.UnstableApi
+import android.util.Log
+
 import kotlinx.coroutines.launch
 
 class DetailsViewModel (
@@ -24,7 +23,6 @@ class DetailsViewModel (
     private val _statusError = MutableStateFlow<String?>(null)
     val statusError: StateFlow<String?> = _statusError.asStateFlow()
 
-    @OptIn(UnstableApi::class)
     fun fetchOpenStatus(restaurantId: String) {
         viewModelScope.launch {
             _isLoadingStatus.value = true
@@ -40,4 +38,5 @@ class DetailsViewModel (
                 _isLoadingStatus.value = false
             }
         }
+    }
 }

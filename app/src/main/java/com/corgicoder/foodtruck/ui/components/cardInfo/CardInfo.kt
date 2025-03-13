@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.corgicoder.foodtruck.R
 import com.corgicoder.foodtruck.data.model.RestaurantData
+import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 import com.corgicoder.foodtruck.ui.components.icon.CustomIcon
 import com.corgicoder.foodtruck.ui.components.icon.IconType
 import com.corgicoder.foodtruck.ui.components.text.CustomText
@@ -34,7 +35,8 @@ fun CardInfo (
     restaurantId: String,
     restaurant: RestaurantData,
     filters:  List<String>,
-    showRating: Boolean,
+    openStatus: RestaurantOpenStatus?,
+    isLoadingStatus: Boolean,
 ) {
     Column (
     ){
@@ -85,6 +87,10 @@ fun CardInfo (
                 fontSize = 14.dp,
                 text = "${restaurant.deliveryTimeMinutes} minutes"
             )
+            } else {
+                Text(
+                    text = "${openStatus}"
+                )
             }
         }
     }

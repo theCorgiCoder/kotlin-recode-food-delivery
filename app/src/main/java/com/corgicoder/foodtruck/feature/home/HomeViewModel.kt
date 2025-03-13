@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corgicoder.foodtruck.data.model.FilterData
 import com.corgicoder.foodtruck.data.model.RestaurantData
+import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 import com.corgicoder.foodtruck.data.model.RestaurantWithFilterNames
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,10 @@ class HomeViewModel : ViewModel() {
     //Data
     private val _allRestaurants = MutableStateFlow<List<RestaurantData>>(emptyList())
 
+    // Add this for storing the selected restaurant
+    private val _selectedRestaurant = MutableStateFlow<RestaurantData?>(null)
+    val selectedRestaurant: StateFlow<RestaurantData?> = _selectedRestaurant.asStateFlow()
+
     private val _filters = MutableStateFlow<List<FilterData>>(emptyList())
     val filters: StateFlow<List<FilterData>> = _filters.asStateFlow()
 
@@ -33,6 +38,9 @@ class HomeViewModel : ViewModel() {
 
     private val _selectedFilterId = MutableStateFlow<String?>(null)
     val selectedFilterId: StateFlow<String?> = _selectedFilterId.asStateFlow()
+
+    private val _openStatus = MutableStateFlow<RestaurantOpenStatus?>(null)
+    val openStatus: StateFlow<RestaurantOpenStatus?> = _openStatus.asStateFlow()
 
     //Combined Data
     private val _restaurantsWithFilterNames = MutableStateFlow<List<RestaurantWithFilterNames>>(emptyList())
@@ -53,7 +61,6 @@ class HomeViewModel : ViewModel() {
 
     fun loadRestaurants() {
         if (_isLoading.value) {
-            Log.d("HomeViewModel", "Skipping loadRestaurants - already loading or loaded")
             return
         }
 
@@ -64,7 +71,6 @@ class HomeViewModel : ViewModel() {
 
             try {
                 val restaurants = restaurantRepository.fetchRestaurants() ?: emptyList()
-                Log.d("HomeViewModel", "Fetched ${restaurants.size} restaurants")
                 _allRestaurants.value = restaurants
 
                 if (restaurants.isNotEmpty()) {
@@ -117,14 +123,12 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+
+
     private fun applyCurrentFilter() {
         val restaurants = _allRestaurants.value
         val filterMap = _filterMap.value
         val filterId = _selectedFilterId.value
-
-        Log.d("HomeViewModel", "Applying filter: $filterId")
-        Log.d("HomeViewModel", "Restaurant count: ${restaurants.size}")
-        Log.d("HomeViewModel", "Filter map size: ${filterMap.size}")
 
         if (restaurants.isEmpty()) {
             Log.w("HomeViewModel", "No restaurants to filter")
@@ -138,7 +142,7 @@ class HomeViewModel : ViewModel() {
         } else {
             restaurants.filter { it.filterIds.contains(filterId) }
         }
-        Log.d("HomeViewModel", "Filtered to ${filteredList.size} restaurants")
+
         // Update the enhanced list with filter names
         val enhancedList = filteredList.map { restaurant ->
             val filterNames = restaurant.filterIds.mapNotNull { id ->
@@ -146,7 +150,6 @@ class HomeViewModel : ViewModel() {
             }
             RestaurantWithFilterNames(restaurant, filterNames)
         }
-        Log.d("HomeViewModel", "Created ${enhancedList.size} enhanced restaurant objects")
         _restaurantsWithFilterNames.value = enhancedList
     }
 
@@ -155,21 +158,16 @@ class HomeViewModel : ViewModel() {
         // No need to call applyCurrentFilter() here as it's triggered by the Flow collection
     }
 
-    fun clearFilter() {
-        _selectedFilterId.value = null
-        // No need to call applyCurrentFilter() here as it's triggered by the Flow collection
-    }
 
-    fun toggleFilter(filterId: String) {
-        if(_selectedFilterId.value == filterId) {
-            _selectedFilterId.value = null
-        }else {
-            _selectedFilterId.value = filterId
+    // Helper methods
+    fun getFilterNamesForRestaurant(restaurant: RestaurantData): List<String> {
+        val filterMap = _filterMap.value
+        return restaurant.filterIds.mapNotNull { filterId ->
+            filterMap[filterId]
         }
     }
 
-    // Helper methods
-    fun getFilterName(filterId: String): String {
-        return _filterMap.value[filterId] ?: "Unknown"
+    fun setSelectedRestaurant(restaurant: RestaurantData) {
+        _selectedRestaurant.value = restaurant
     }
 }

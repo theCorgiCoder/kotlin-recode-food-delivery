@@ -27,24 +27,19 @@ fun HomeScreen(
     onRestaurantClick: (RestaurantData) -> Unit,
     viewModel: HomeViewModel
 ) {
-    Log.d("HomeScreen", "Composing HomeScreen")
+
     LaunchedEffect(Unit) {
             viewModel.loadRestaurants()
     }
 
     val filters = viewModel.filters.collectAsState()
-    Log.d("HomeScreen", "Filters Collect: ${filters.value}")
     val selectedFilterId = viewModel.selectedFilterId.collectAsState()
-    Log.d("HomeScreen", "Selected filter ID: $selectedFilterId")
     val restaurantsWithFilters = viewModel.restaurantsWithFilterNames.collectAsState()
-    Log.d("HomeScreen", "Restaurants count: ${restaurantsWithFilters.value}")
 
     val isLoading = viewModel.isLoading.collectAsState()
-    Log.d("HomeScreen", "Is loading: $isLoading")
-  //  val error = viewModel.error.collectAsState()
+
     val errorState = viewModel.error.collectAsState(initial = null)
     val errorValue = errorState.value
-    Log.d("HomeScreen", "Error collected: $errorValue")
 
     Box(modifier = Modifier.fillMaxSize()
     ) {
@@ -59,7 +54,6 @@ fun HomeScreen(
 
             }
             else -> {
-                Log.d("HomeScreen", "Showing main content")
             Column(modifier = Modifier.fillMaxSize()) {
                 Spacer(modifier = Modifier.padding(top = 40.dp))
                 Header(modifier = Modifier

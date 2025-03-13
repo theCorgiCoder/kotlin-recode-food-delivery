@@ -1,6 +1,8 @@
 package com.corgicoder.foodtruck.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,6 +38,9 @@ fun NavGraph (
                 //onFilterClick = {},
                 onRestaurantClick = { restaurant ->
                     navController.navigate(Route.createRestaurantDetailsRoute(restaurant.id))
+
+                    // Store the selected restaurant in the ViewModel
+                    homeViewModel.setSelectedRestaurant(restaurant)
                 },
                 viewModel = homeViewModel
             )
@@ -44,14 +49,21 @@ fun NavGraph (
                 route = Route.DETAILS,
                 arguments = listOf(navArgument("restaurantId") { type = NavType.StringType})
             ) { backStackEntry ->
-                    val restaurantId = backStackEntry.arguments?.getString("restaurantId") ?: return@composable
+                val restaurantId = backStackEntry.arguments?.getString("restaurantId") ?: return@composable
+
+                // Get the selected restaurant from the ViewModel
+                val selectedRestaurant = homeViewModel.selectedRestaurant.collectAsState().value
+
+                if (selectedRestaurant != null && selectedRestaurant.id == restaurantId) {
                     DetailsScreen(
                         restaurantId = restaurantId,
-                        restaurant = restaurantRepository,
-                        showRating = false,
+                        repository = restaurantRepository,
                         onNavigateBack = { navController.popBackStack() },
                     )
+                } else {
+                    Text("Error: Restaurant not found")
                 }
+            }
         }
 }
 

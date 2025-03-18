@@ -10,4 +10,4 @@ data class RestaurantOpenStatus(
     val restaurantId: String,
     @Json(name = "is_currently_open")
     val isCurrentlyOpen: Boolean
-) : MutableState<RestaurantOpenStatus?>
+)

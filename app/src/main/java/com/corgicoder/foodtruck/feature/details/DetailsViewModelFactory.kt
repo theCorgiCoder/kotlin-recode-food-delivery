@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 
-/*  Enables dependency injection for ViewModels aka... this allows me access to the Repository */
-
 class DetailsViewModelFactory (
     private val repository: RestaurantRepository
 ) : ViewModelProvider.Factory {

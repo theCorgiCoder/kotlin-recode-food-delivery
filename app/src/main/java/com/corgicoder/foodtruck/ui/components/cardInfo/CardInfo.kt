@@ -35,8 +35,7 @@ fun CardInfo (
     restaurantId: String,
     restaurant: RestaurantData,
     filters:  List<String>,
-    openStatus: RestaurantOpenStatus?,
-    isLoadingStatus: Boolean,
+    showRating: Boolean,
 ) {
     Column (
     ){
@@ -89,7 +88,7 @@ fun CardInfo (
             )
             } else {
                 Text(
-                    text = "${openStatus}"
+                    text = "Open Status:"
                 )
             }
         }

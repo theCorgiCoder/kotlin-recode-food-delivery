@@ -59,6 +59,8 @@ fun NavGraph (
                         restaurantId = restaurantId,
                         repository = restaurantRepository,
                         onNavigateBack = { navController.popBackStack() },
+                        homeViewModel = homeViewModel,
+                        showRating = false,
                     )
                 } else {
                     Text("Error: Restaurant not found")

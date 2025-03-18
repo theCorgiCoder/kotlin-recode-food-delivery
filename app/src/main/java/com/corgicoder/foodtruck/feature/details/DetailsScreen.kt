@@ -2,13 +2,11 @@ package com.corgicoder.foodtruck.feature.details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -81,11 +79,13 @@ fun DetailsScreen(
                 restaurantId = restaurantWithFilters.restaurant.id,
                 restaurant = restaurantWithFilters.restaurant,
                 filters = restaurantWithFilters.filterNames,
-                openStatus = openStatus.value,
                 showRating = true
             )
     }
 
         }
 }
+
+
+
 

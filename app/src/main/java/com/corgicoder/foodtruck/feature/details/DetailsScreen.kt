@@ -42,12 +42,14 @@ fun DetailsScreen(
     val isLoadingStatus = detailsViewModel.isLoadingStatus.collectAsState()
     val statusError = detailsViewModel.statusError.collectAsState()
 
+    println("OPEN STATUS: $openStatus")
+
 
     //fetch restaurant details
     LaunchedEffect(restaurantId) {
       detailsViewModel.fetchOpenStatus(restaurantId)
     }
-
+// This is redundant, restaurants should never = null
     if (restaurantWithFilters == null) {
         Box(modifier = Modifier.fillMaxSize()){
             Row(

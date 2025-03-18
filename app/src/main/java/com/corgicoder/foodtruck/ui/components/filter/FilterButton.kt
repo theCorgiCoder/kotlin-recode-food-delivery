@@ -2,6 +2,7 @@ package com.corgicoder.foodtruck.ui.components.filter
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun FilterButton (
+    filterId: String,
     imageUrl: String,
     name: String,
     selected: Boolean,
@@ -55,11 +57,12 @@ fun FilterButton (
         ),
         modifier = Modifier
             .height(buttonHeight) // Increased height to accommodate larger image
+            .clickable { onClick(filterId) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.padding(horizontal = 15.dp),
+            modifier = Modifier
         ) {
             Box(
                 modifier = Modifier

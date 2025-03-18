@@ -12,7 +12,7 @@ import com.corgicoder.foodtruck.feature.home.HomeViewModel
 @Composable
 fun FilterBar(
     filters: List<FilterData>,
-    selectedFilterId: String?,
+    selectedFilterIds: List<String?>,
     onFilterToggled: (String) -> Unit,
     viewModel: HomeViewModel
 ) {
@@ -23,10 +23,11 @@ fun FilterBar(
        items(filters.size) { index ->
            val filter = filters[index]
            FilterButton (
-               selected = selectedFilterId == filter.id,
+               selected = selectedFilterIds.contains(filter.id),
                onClick = { onFilterToggled(filter.id) },
                imageUrl = filter.imageUrl,
-               name = filter.name
+               name = filter.name,
+               filterId = filter.id
            )
        }
     }

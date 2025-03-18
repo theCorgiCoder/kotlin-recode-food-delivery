@@ -11,7 +11,10 @@ import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class HomeViewModel : ViewModel() {
     //Calling RestaurantRepo to fetch data
@@ -36,8 +39,8 @@ class HomeViewModel : ViewModel() {
 
     private val _filterMap = MutableStateFlow<Map<String, String>>(emptyMap())
 
-    private val _selectedFilterId = MutableStateFlow<String?>(null)
-    val selectedFilterId: StateFlow<String?> = _selectedFilterId.asStateFlow()
+    private val _selectedFilterIds = MutableStateFlow<List<String?>>(emptyList())
+    val selectedFilterIds: StateFlow<List<String?>> = _selectedFilterIds.asStateFlow()
 
     private val _openStatus = MutableStateFlow<RestaurantOpenStatus?>(null)
     val openStatus: StateFlow<RestaurantOpenStatus?> = _openStatus.asStateFlow()
@@ -50,7 +53,7 @@ class HomeViewModel : ViewModel() {
     init {
         // Set up automatic filtering when selectedFilterId changes
         viewModelScope.launch {
-            _selectedFilterId
+            _selectedFilterIds
                 .collect {
                     if (_allRestaurants.value.isNotEmpty()) {
                         applyCurrentFilter()
@@ -128,33 +131,37 @@ class HomeViewModel : ViewModel() {
     private fun applyCurrentFilter() {
         val restaurants = _allRestaurants.value
         val filterMap = _filterMap.value
-        val filterId = _selectedFilterId.value
-
-        if (restaurants.isEmpty()) {
-            Log.w("HomeViewModel", "No restaurants to filter")
-            _restaurantsWithFilterNames.value = emptyList()
-            return
-        }
-
-        val filteredList = if (filterId.isNullOrEmpty()) {
+        println(restaurants)
+        val filteredList = if (selectedFilterIds.value.isEmpty()) {
             //when no filter is selected, show ALL restaurants
             restaurants
         } else {
-            restaurants.filter { it.filterIds.contains(filterId) }
+            restaurants.filter { it.filterIds.any{restaurant -> restaurant in selectedFilterIds.value} }
         }
+        println("FILTERED LIST: $filteredList")
 
         // Update the enhanced list with filter names
-        val enhancedList = filteredList.map { restaurant ->
+        val namedFilterList = filteredList.map { restaurant ->
             val filterNames = restaurant.filterIds.mapNotNull { id ->
                 filterMap[id]
             }
+            println(filterNames)
             RestaurantWithFilterNames(restaurant, filterNames)
         }
-        _restaurantsWithFilterNames.value = enhancedList
+        _restaurantsWithFilterNames.value = namedFilterList
     }
 
-    fun filterByRestaurantFilterId(filterId: String?) {
-        _selectedFilterId.value = filterId
+    fun filterByRestaurantFilterIds(filterId: String) {
+        val filterExists = selectedFilterIds.value.contains(filterId)
+        val listOfFilters = selectedFilterIds.value.toMutableList()
+
+        if (filterExists) {
+        listOfFilters.remove( filterId )
+        } else {
+           listOfFilters.add(filterId)
+        }
+        println(listOfFilters)
+        _selectedFilterIds.value = listOfFilters
         // No need to call applyCurrentFilter() here as it's triggered by the Flow collection
     }
 

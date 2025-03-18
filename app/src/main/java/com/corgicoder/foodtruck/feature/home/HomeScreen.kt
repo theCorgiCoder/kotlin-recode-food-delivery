@@ -33,7 +33,7 @@ fun HomeScreen(
     }
 
     val filters = viewModel.filters.collectAsState()
-    val selectedFilterId = viewModel.selectedFilterId.collectAsState()
+    val selectedFilterIds = viewModel.selectedFilterIds.collectAsState()
     val restaurantsWithFilters = viewModel.restaurantsWithFilterNames.collectAsState()
 
     val isLoading = viewModel.isLoading.collectAsState()
@@ -64,9 +64,10 @@ fun HomeScreen(
                   Row {
                         FilterBar(
                             filters = filters.value,
-                            selectedFilterId = selectedFilterId.value,
+                            selectedFilterIds = selectedFilterIds.value,
                             onFilterToggled = { filterId ->
-                                    viewModel.filterByRestaurantFilterId(filterId)
+                                println("Filter Toggled")
+                                    viewModel.filterByRestaurantFilterIds(filterId)
                             },
                             viewModel = viewModel
                        )

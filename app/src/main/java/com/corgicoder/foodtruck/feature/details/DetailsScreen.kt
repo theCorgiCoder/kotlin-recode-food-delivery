@@ -18,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import com.corgicoder.foodtruck.feature.home.HomeViewModel
 import com.corgicoder.foodtruck.ui.components.button.BackButton
-import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
+import com.corgicoder.foodtruck.ui.components.card.Card
 
 @Composable
 fun DetailsScreen(
@@ -77,12 +77,6 @@ fun DetailsScreen(
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
-            CardInfo(
-                restaurantId = restaurantWithFilters.restaurant.id,
-                restaurant = restaurantWithFilters.restaurant,
-                filters = restaurantWithFilters.filterNames,
-                showRating = true
-            )
     }
 
         }

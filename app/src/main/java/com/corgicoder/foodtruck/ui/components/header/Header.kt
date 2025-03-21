@@ -10,7 +10,7 @@ import com.corgicoder.foodtruck.R
 
 @Composable
 fun Header(modifier: Modifier = Modifier){
-    Row {
+    Row (modifier = modifier){
         Image(
             painter = painterResource(R.drawable.umain_logo),
             contentDescription = "Image of umain logo",

@@ -50,7 +50,6 @@ fun HomeScreen(
         .fillMaxSize()
     ) {
         when { isLoading.value -> {
-             Log.d("HomeScreen", "Showing loading indicator")
           CircularProgressIndicator(
                  modifier = Modifier.align(Alignment.Center)
              )
@@ -72,11 +71,8 @@ fun HomeScreen(
                     Column (
                         modifier = Modifier.padding(16.dp)
                     ){
-                        Spacer(modifier = Modifier.padding(bottom = 16.dp))
-                        Header(
-                            modifier = Modifier
-
-                        )
+                        Spacer(modifier = Modifier.padding(vertical = 16.dp))
+                        Header(modifier = Modifier)
                         Spacer(modifier = Modifier.padding(bottom = 16.dp))
                         FilterBar(
                             filters = filters.value,

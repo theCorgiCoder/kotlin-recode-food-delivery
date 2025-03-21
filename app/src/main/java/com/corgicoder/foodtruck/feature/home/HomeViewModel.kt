@@ -18,7 +18,7 @@ import kotlin.math.log
 
 class HomeViewModel : ViewModel() {
     //Calling RestaurantRepo to fetch data
-    private val restaurantRepository: RestaurantRepository = RestaurantRepository()
+
 
     //UI State
     private val _isLoading = MutableStateFlow<Boolean>(false)

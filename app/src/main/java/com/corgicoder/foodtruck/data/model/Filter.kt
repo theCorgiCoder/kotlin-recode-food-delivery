@@ -10,8 +10,3 @@ data class FilterData(
     @Json(name = "image_url")
     val imageUrl: String,
 )
-
-@JsonClass(generateAdapter = true)
-data class FilterResponse(
-    val filters: List<FilterData>
-)

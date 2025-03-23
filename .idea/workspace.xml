@@ -10,12 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="157354f1-6de5-43bb-858a-2391f77c093d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/repository/FilterRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/utils/Result.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.10.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.2/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/feature/uiState/UiState.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/repository/RestaurantRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/repository/RestaurantRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/model/Filter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/model/Filter.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/feature/home/HomeViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/feature/home/HomeViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,6 +90,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/feature/UiState" />
       <recent name="$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/data/model" />
       <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
     </key>
@@ -207,22 +205,6 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/feature/home/HomeViewModel.kt</url>
-          <line>57</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/corgicoder/foodtruck/feature/home/HomeViewModel.kt</url>
-          <line>59</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

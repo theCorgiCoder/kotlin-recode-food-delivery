@@ -32,7 +32,7 @@ fun DetailsScreen(
    val detailsViewModel: DetailsViewModel = viewModel(
        factory = DetailsViewModelFactory(repository)
    )
-
+/*
     // Find the restaurant in the HomeViewModel's data
     val restaurantsWithFilters = homeViewModel.restaurantsWithFilterNames.collectAsState().value
     val restaurantWithFilters = restaurantsWithFilters.find { it.restaurant.id == restaurantId }
@@ -80,6 +80,8 @@ fun DetailsScreen(
     }
 
         }
+
+ */
 }
 
 

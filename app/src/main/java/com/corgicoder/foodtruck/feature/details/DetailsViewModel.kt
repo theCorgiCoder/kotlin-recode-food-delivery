@@ -27,7 +27,7 @@ class DetailsViewModel (
         viewModelScope.launch {
             _isLoadingStatus.value = true
             _statusError.value = null
-
+/*
             try {
                 val status = repository.fetchRestaurantStatus(restaurantId)
                 _openStatus.value = status
@@ -37,6 +37,7 @@ class DetailsViewModel (
             } finally {
                 _isLoadingStatus.value = false
             }
+            */
         }
     }
 }

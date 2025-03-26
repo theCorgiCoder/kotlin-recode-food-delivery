@@ -9,7 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.corgicoder.foodtruck.data.repository.FilterRepository
+import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
+import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
 import com.corgicoder.foodtruck.feature.details.DetailsScreen
 import com.corgicoder.foodtruck.feature.home.HomeScreen
 import com.corgicoder.foodtruck.feature.home.HomeViewModel
@@ -27,7 +30,8 @@ fun NavGraph (
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
-    val restaurantRepository = RestaurantRepository()
+    val restaurantRepository = RestaurantRepositoryImpl()
+    val filterRepository = FilterRepositoryImpl()
 
     NavHost(
         navController = navController,
@@ -40,7 +44,7 @@ fun NavGraph (
                     navController.navigate(Route.createRestaurantDetailsRoute(restaurant.id))
 
                     // Store the selected restaurant in the ViewModel
-                    homeViewModel.setSelectedRestaurant(restaurant)
+                homeViewModel.selectedRestaurant(restaurant)
                 },
                 viewModel = homeViewModel
             )
@@ -52,7 +56,7 @@ fun NavGraph (
                 val restaurantId = backStackEntry.arguments?.getString("restaurantId") ?: return@composable
 
                 // Get the selected restaurant from the ViewModel
-                val selectedRestaurant = homeViewModel.selectedRestaurant.collectAsState().value
+               /* val selectedRestaurant = homeViewModel.selectedRestaurant.collectAsState().value
 
                 if (selectedRestaurant != null && selectedRestaurant.id == restaurantId) {
                     DetailsScreen(
@@ -65,6 +69,8 @@ fun NavGraph (
                 } else {
                     Text("Error: Restaurant not found")
                 }
+
+                */
             }
         }
 }

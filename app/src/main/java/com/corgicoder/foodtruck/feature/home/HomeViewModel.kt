@@ -46,24 +46,6 @@ class HomeViewModel (
     private val _detailedState = MutableStateFlow(RestaurantDetailsState())
     val detailedState: StateFlow<RestaurantDetailsState> = _detailedState.asStateFlow()
 
-    /*
-    * // Example of updating loading state
-_uiState.update { it.copy(isLoading = true, error = null) }
-
-// Example of updating restaurant list
-_restaurantState.update { it.copy(allRestaurants = restaurants) }
-
-// Example of updating filters
-_filterState.update { it.copy(
-    availableFilters = filtersList,
-    filterIdToNameMap = filterIdToNameMap
-) }
-
-// Example of updating selected restaurant
-_detailState.update { it.copy(selectedRestaurant = restaurant) }
-    *
-    * */
-
     init {
         // Set up automatic filtering when selectedFilterId changes
         viewModelScope.launch {
@@ -71,7 +53,7 @@ _detailState.update { it.copy(selectedRestaurant = restaurant) }
                 .map { it.selectedFilterIds }
                 .collect{
                     if (_restaurantState.value.allRestaurants.isNotEmpty()) {
-                        applyCurrentFilter()
+                       applyCurrentFilter()
                     }
                 }
         }
@@ -123,87 +105,91 @@ _detailState.update { it.copy(selectedRestaurant = restaurant) }
     private fun loadFilters(restaurants: List<RestaurantData>) {
         viewModelScope.launch {
             Log.d("HomeViewModel", "Loading filters started")
-            try {
-                val filterIds = restaurants.flatMap { it.filterIds }.distinct()
-                Log.d("HomeViewModel", "Found ${filterIds.size} unique filter IDs")
-                val filtersList = mutableListOf<FilterData>()
-                val filterIdToNameMap = mutableMapOf<String, String>()
+            when (val result = filterRepository.getAllFilters()) {
+                is Result.Success -> {
+                    val filtersList = result.data
+                    // Mapping for display: filter ID to filter name
+                    val mappingIds = filtersList.associate { filter -> filter.id to filter.name }
 
-                for (filterId in filterIds) {
-                    restaurantRepository.fetchFilterId(filterId)?.let { filterData ->
-                        filtersList.add(filterData)
-                        filterIdToNameMap[filterData.id] = filterData.name
-                        Log.d("HomeViewModel", "Loaded filter: ${filterData.id} = ${filterData.name}")
+                    _filterState.update { it.copy(
+                        filters = filtersList,
+                        namedFilterIdsMap = mappingIds
+                    ) }
+                    Log.d("HomeViewModel", "Loaded ${filtersList.size} filters")
 
-                    }
+                  //  applyCurrentFilter()
+
+                    _uiState.update { it.copy(isLoading = false) }
                 }
-
-                _filters.value = filtersList
-                _filterMap.value = filterIdToNameMap
-
-                Log.d("HomeViewModel", "Loaded ${filtersList.size} filters")
-
-                // Apply current filter to the new data
-                applyCurrentFilter()
-
-                _isLoading.value = false
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Error loading filters", e)
-                _error.value = "Error loading filters: ${e.message}"
-                _isLoading.value = false
+                is Result.Error -> {
+                    _uiState.update { it.copy(
+                        isLoading = false,
+                        error = "Error loading filters: ${result.exception.message}"
+                    ) }
+                    Log.e("HomeViewModel", "Error loading filters", result.exception)
+                }
             }
+
+
+
         }
     }
 
-
-
     private fun applyCurrentFilter() {
-        val restaurants = _allRestaurants.value
-        val filterMap = _filterMap.value
+        val restaurants = _restaurantState.value.allRestaurants
+        val filterMap = _filterState.value.namedFilterIdsMap
+        val selectedFilterIds = _filterState.value.selectedFilterIds
         println(restaurants)
-        val filteredList = if (selectedFilterIds.value.isEmpty()) {
+        val filteredList = if (selectedFilterIds.isEmpty()) {
             //when no filter is selected, show ALL restaurants
             restaurants
         } else {
-            restaurants.filter { it.filterIds.any{restaurant -> restaurant in selectedFilterIds.value} }
+            restaurants.filter { restaurant ->
+                restaurant.filterIds.any { filterId -> filterId in selectedFilterIds}
+             }
         }
         println("FILTERED LIST: $filteredList")
 
         // Update the enhanced list with filter names
-        val namedFilterList = filteredList.map { restaurant ->
+        val namedFilters = filteredList.map { restaurant ->
             val filterNames = restaurant.filterIds.mapNotNull { id ->
                 filterMap[id]
             }
             println(filterNames)
             RestaurantWithFilterNames(restaurant, filterNames)
         }
-        _restaurantsWithFilterNames.value = namedFilterList
+       _restaurantState.update { it.copy(
+           restaurantsWithFilterNames = namedFilters
+       ) }
     }
 
     fun filterByRestaurantFilterIds(filterId: String) {
-        val filterExists = selectedFilterIds.value.contains(filterId)
-        val listOfFilters = selectedFilterIds.value.toMutableList()
+        val currentSelectedFilter = _filterState.value.selectedFilterIds
+        val updatedFilters = currentSelectedFilter.toMutableList()
 
-        if (filterExists) {
-        listOfFilters.remove( filterId )
+        if (filterId in currentSelectedFilter) {
+       updatedFilters.remove(filterId)
         } else {
-           listOfFilters.add(filterId)
+           updatedFilters.add(filterId)
         }
-        println(listOfFilters)
-        _selectedFilterIds.value = listOfFilters
-        // No need to call applyCurrentFilter() here as it's triggered by the Flow collection
-    }
 
+        _filterState.update { it.copy(
+            selectedFilterIds = updatedFilters
+        )
+
+        }
+        }
 
     // Helper methods
-    fun getFilterNamesForRestaurant(restaurant: RestaurantData): List<String> {
-        val filterMap = _filterMap.value
-        return restaurant.filterIds.mapNotNull { filterId ->
-            filterMap[filterId]
-        }
+
+    fun selectedRestaurant(restaurant: RestaurantData) {
+        _detailedState.update { it.copy(
+            selectedRestaurant = restaurant
+        ) }
     }
 
-    fun setSelectedRestaurant(restaurant: RestaurantData) {
-        _selectedRestaurant.value = restaurant
     }
-}
+
+
+
+

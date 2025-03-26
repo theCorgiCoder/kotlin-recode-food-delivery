@@ -1,6 +1,7 @@
 package com.corgicoder.foodtruck.feature.home
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,25 +38,20 @@ fun HomeScreen(
             viewModel.loadRestaurants()
     }
 
-    val filters = viewModel.filters.collectAsState()
-    val selectedFilterIds = viewModel.selectedFilterIds.collectAsState()
-    val restaurantsWithFilters = viewModel.restaurantsWithFilterNames.collectAsState()
-
-    val isLoading = viewModel.isLoading.collectAsState()
-
-    val errorState = viewModel.error.collectAsState(initial = null)
-    val errorValue = errorState.value
+    val selectedFilterIds = viewModel.filterState.collectAsState()
+    val restaurantsWithFilters = viewModel.restaurantState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier
         .fillMaxSize()
     ) {
-        when { isLoading.value -> {
+        when { uiState.value.isLoading -> {
           CircularProgressIndicator(
                  modifier = Modifier.align(Alignment.Center)
              )
         }
-            errorValue != null -> {
-                Log.d("HomeScreen", "Showing error: $errorValue")
+            uiState.value.error != null -> {
+                Log.d("HomeScreen", "Showing error: ${uiState.value.error}")
 
             }
             else -> {
@@ -65,8 +61,8 @@ fun HomeScreen(
                         .wrapContentHeight()
                         .align(Alignment.TopCenter)
                         .zIndex(1f),
-                    color = Color.White,
-                    shadowElevation = 4.dp
+                    color = Color(0xFFF8F8F8),
+
                 ) {
                     Column (
                         modifier = Modifier.padding(16.dp)
@@ -75,8 +71,8 @@ fun HomeScreen(
                         Header(modifier = Modifier)
                         Spacer(modifier = Modifier.padding(bottom = 16.dp))
                         FilterBar(
-                            filters = filters.value,
-                            selectedFilterIds = selectedFilterIds.value,
+                            filters = selectedFilterIds.value.filters,
+                            selectedFilterIds = selectedFilterIds.value.selectedFilterIds,
                             onFilterToggled = { filterId ->
                                 println("Filter Toggled")
                                 viewModel.filterByRestaurantFilterIds(filterId)
@@ -96,7 +92,7 @@ fun HomeScreen(
                             bottom = 16.dp
                         )
                     ){
-                        items(restaurantsWithFilters.value) { restaurantWithFilters ->
+                        items(restaurantsWithFilters.value.restaurantsWithFilterNames) { restaurantWithFilters ->
                             Card(
                                 restaurant = restaurantWithFilters.restaurant,
                                 filters = restaurantWithFilters.filterNames,

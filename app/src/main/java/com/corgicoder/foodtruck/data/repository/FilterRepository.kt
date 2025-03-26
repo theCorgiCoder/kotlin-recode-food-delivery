@@ -32,6 +32,7 @@ class FilterRepositoryImpl() : FilterRepository {
 
     override suspend fun getAllFilters(): Result<List<FilterData>> {
         return try {
+            // Fetch restaurants to extract filter IDs
             val restaurantResponse = apiService.getRestaurants()
 
             if(!restaurantResponse.isSuccessful) {
@@ -40,7 +41,6 @@ class FilterRepositoryImpl() : FilterRepository {
             }
 
             val restaurants = restaurantResponse.body()?.restaurants ?: emptyList()
-
             // Extract unique filter IDs from all restaurants
             val filterIds = restaurants.flatMap { it.filterIds }.distinct()
 

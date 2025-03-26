@@ -50,11 +50,8 @@ fun FilterButton (
     Surface(
         shape = RoundedCornerShape(24.dp), // Increased corner radius to match design
         color = backgroundColor,
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.outline
-        ),
+        border = null,
+        shadowElevation = 4.dp,
         modifier = Modifier
             .height(buttonHeight) // Increased height to accommodate larger image
             .clickable { onClick(filterId) }
@@ -83,7 +80,8 @@ fun FilterButton (
                 text = name,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier.padding(end = 16.dp)
             )
         }
     }

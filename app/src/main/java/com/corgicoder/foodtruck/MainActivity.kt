@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                 ){
-                    Box( modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Box( modifier = Modifier) {
                         NavGraph(
                             homeViewModel = HomeViewModel()
                         )

@@ -1,5 +1,6 @@
 package com.corgicoder.foodtruck.feature.home
 
+import android.net.NetworkInfo.DetailedState
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,55 +8,69 @@ import com.corgicoder.foodtruck.data.model.FilterData
 import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 import com.corgicoder.foodtruck.data.model.RestaurantWithFilterNames
+import com.corgicoder.foodtruck.data.repository.FilterRepository
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
+import com.corgicoder.foodtruck.feature.uiState.FilterState
+import com.corgicoder.foodtruck.feature.uiState.RestaurantDetailsState
+import com.corgicoder.foodtruck.feature.uiState.RestaurantListState
+import com.corgicoder.foodtruck.data.utils.Result
+import com.corgicoder.foodtruck.feature.uiState.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.math.log
 
-class HomeViewModel : ViewModel() {
-    //Calling RestaurantRepo to fetch data
-    private val restaurantRepository: RestaurantRepository = RestaurantRepository()
+class HomeViewModel (
+    private val restaurantRepository: RestaurantRepository,
+    private val filterRepository: FilterRepository
+) : ViewModel() {
 
-    //UI State
-    private val _isLoading = MutableStateFlow<Boolean>(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    //Error and Loading Ui state flows
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error.asStateFlow()
+    //Restaurant related state flows
+    private val _restaurantState = MutableStateFlow(RestaurantListState())
+    val restaurantState: StateFlow<RestaurantListState> = _restaurantState.asStateFlow()
 
-    //Data
-    private val _allRestaurants = MutableStateFlow<List<RestaurantData>>(emptyList())
+    // Filter related state flows
+    private val _filterState = MutableStateFlow(FilterState())
+    val filterState: StateFlow<FilterState> = _filterState.asStateFlow()
 
-    // Add this for storing the selected restaurant
-    private val _selectedRestaurant = MutableStateFlow<RestaurantData?>(null)
-    val selectedRestaurant: StateFlow<RestaurantData?> = _selectedRestaurant.asStateFlow()
+    //Detail related state flows
+    private val _detailedState = MutableStateFlow(RestaurantDetailsState())
+    val detailedState: StateFlow<RestaurantDetailsState> = _detailedState.asStateFlow()
 
-    private val _filters = MutableStateFlow<List<FilterData>>(emptyList())
-    val filters: StateFlow<List<FilterData>> = _filters.asStateFlow()
+    /*
+    * // Example of updating loading state
+_uiState.update { it.copy(isLoading = true, error = null) }
 
-    private val _filterMap = MutableStateFlow<Map<String, String>>(emptyMap())
+// Example of updating restaurant list
+_restaurantState.update { it.copy(allRestaurants = restaurants) }
 
-    private val _selectedFilterIds = MutableStateFlow<List<String?>>(emptyList())
-    val selectedFilterIds: StateFlow<List<String?>> = _selectedFilterIds.asStateFlow()
+// Example of updating filters
+_filterState.update { it.copy(
+    availableFilters = filtersList,
+    filterIdToNameMap = filterIdToNameMap
+) }
 
-    private val _openStatus = MutableStateFlow<RestaurantOpenStatus?>(null)
-    val openStatus: StateFlow<RestaurantOpenStatus?> = _openStatus.asStateFlow()
-
-    //Combined Data
-    private val _restaurantsWithFilterNames = MutableStateFlow<List<RestaurantWithFilterNames>>(emptyList())
-    val restaurantsWithFilterNames: StateFlow<List<RestaurantWithFilterNames>> = _restaurantsWithFilterNames.asStateFlow()
-
+// Example of updating selected restaurant
+_detailState.update { it.copy(selectedRestaurant = restaurant) }
+    *
+    * */
 
     init {
         // Set up automatic filtering when selectedFilterId changes
         viewModelScope.launch {
-            _selectedFilterIds
-                .collect {
-                    if (_allRestaurants.value.isNotEmpty()) {
+            _filterState
+                .map { it.selectedFilterIds }
+                .collect{
+                    if (_restaurantState.value.allRestaurants.isNotEmpty()) {
                         applyCurrentFilter()
                     }
                 }
@@ -63,31 +78,45 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadRestaurants() {
-        if (_isLoading.value) {
+        if (_uiState.value.isLoading) {
             return
         }
 
         viewModelScope.launch {
+            // Update loading state
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
             Log.d("HomeViewModel", "Loading restaurants started")
-            _isLoading.value = true
-            _error.value = null
 
-            try {
-                val restaurants = restaurantRepository.fetchRestaurants() ?: emptyList()
-                _allRestaurants.value = restaurants
+          when (val result = restaurantRepository.getRestaurants()) {
+              is Result.Success -> {
 
-                if (restaurants.isNotEmpty()) {
-                    loadFilters(restaurants)
-                } else {
-                    _error.value = "Failed to fetch restaurant data."
-                    _isLoading.value = false
-                }
-            } catch (e: Exception) {
-                _error.value = "An error occurred: ${e.message}"
-                Log.e("HomeViewModel", "Error loading restaurants", e)
-                _allRestaurants.value = emptyList()
-                _isLoading.value = false
-            }
+                  val restaurants = result.data
+                  //Update state
+                  _restaurantState.update { it.copy(allRestaurants = restaurants) }
+
+                  if (restaurants.isNotEmpty()) {
+                     loadFilters(restaurants)
+                  } else {
+                      _uiState.update { it.copy(
+                          isLoading = false,
+                          error = "No Data Available"
+                      ) }
+                  }
+              }
+
+              is Result.Error -> {
+                val exception = result.exception
+
+                _uiState.update { it.copy(
+                    isLoading = false,
+                    error = "Error: ${exception.message}"
+                ) }
+
+              Log.e("ViewModel", "Error getting data", exception)
+
+              }
+          }
         }
     }
 

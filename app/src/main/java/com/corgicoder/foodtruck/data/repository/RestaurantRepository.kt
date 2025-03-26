@@ -1,64 +1,46 @@
 package com.corgicoder.foodtruck.data.repository
 
 import android.util.Log
+import com.corgicoder.foodtruck.data.utils.Result
 import com.corgicoder.foodtruck.data.api.RetrofitClient
-import com.corgicoder.foodtruck.data.model.FilterData
 import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
-import com.corgicoder.foodtruck.data.model.RestaurantsResponse
-import retrofit2.Response
 
-class RestaurantRepository {
+interface RestaurantRepository {
+    suspend fun getRestaurants(): Result<List<RestaurantData>>
+    suspend fun getRestaurantStatus(restaurantId: String): Result<RestaurantOpenStatus>
+}
+
+class RestaurantRepositoryImpl : RestaurantRepository {
     private val apiService = RetrofitClient.restaurantAPIService
 
-    // Fetch restaurant list
-    suspend fun fetchRestaurants(): List<RestaurantData>? {
+    override suspend fun getRestaurants(): Result<List<RestaurantData>> {
         return try {
-            val response: Response<RestaurantsResponse> = apiService.getRestaurants()
+            val response = apiService.getRestaurants()
             if (response.isSuccessful) {
-                response.body()?.restaurants
-            }else {
-                Log.e("RestaurantRepository", "Error: ${response.errorBody()?.string()}")
-                emptyList()
-            }
-        }
-        catch (e: Exception) {
-            Log.e("RestaurantRepository", "Error: ${e.message}")
-            emptyList()
-        }
-    }
-
-    // Fetch filters by id
-    suspend fun fetchFilterId(filterId: String): FilterData? {
-        return try {
-            val response = apiService.getFilterId(filterId)
-
-            if(response.isSuccessful) {
-                response.body()
-            }else {
-                Log.e("RestaurantRepository", "Error: ${response.errorBody()?.string()}")
-                null
+                Result.Success(response.body()?.restaurants ?: emptyList())
+            } else {
+                Result.Error(Exception("API error: ${response.code()}"))
             }
         } catch (e: Exception) {
-            Log.e("RestaurantRepository", "Exception: ${e.message}")
-            null
+            Result.Error(e)
         }
     }
 
-    // Fetch Open Status of restaurant
-    suspend fun fetchRestaurantStatus(restaurantId: String): RestaurantOpenStatus? {
+    override suspend fun getRestaurantStatus(restaurantId: String): Result<RestaurantOpenStatus> {
         return try {
             val response = apiService.getOpenStatus(restaurantId)
-
-            if(response.isSuccessful) {
-                response.body()
-            }else {
+            if (response.isSuccessful) {
+              response.body()?.let {
+                  Result.Success(it)
+              } ?: Result.Error(Exception("Empty restaurant response body"))
+            } else {
                 Log.e("RestaurantRepository", "Error: ${response.errorBody()?.string()}")
-                null
+                Result.Error(Exception ("API error: ${response.code()}"))
             }
         } catch (e: Exception) {
             Log.e("RestaurantRepository", "Exception: ${e.message}")
-            null}
+            Result.Error(e)
+        }
     }
-
 }

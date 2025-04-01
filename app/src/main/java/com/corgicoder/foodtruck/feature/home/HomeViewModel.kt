@@ -1,29 +1,23 @@
 package com.corgicoder.foodtruck.feature.home
 
-import android.net.NetworkInfo.DetailedState
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.corgicoder.foodtruck.data.model.FilterData
 import com.corgicoder.foodtruck.data.model.RestaurantData
-import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 import com.corgicoder.foodtruck.data.model.RestaurantWithFilterNames
 import com.corgicoder.foodtruck.data.repository.FilterRepository
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
+import com.corgicoder.foodtruck.data.utils.Result
 import com.corgicoder.foodtruck.feature.uiState.FilterState
 import com.corgicoder.foodtruck.feature.uiState.RestaurantDetailsState
 import com.corgicoder.foodtruck.feature.uiState.RestaurantListState
-import com.corgicoder.foodtruck.data.utils.Result
 import com.corgicoder.foodtruck.feature.uiState.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 class HomeViewModel (
     private val restaurantRepository: RestaurantRepository,

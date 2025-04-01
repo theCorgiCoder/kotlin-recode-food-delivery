@@ -21,6 +21,7 @@ import com.corgicoder.foodtruck.data.repository.FilterRepository
 import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
+import com.corgicoder.foodtruck.feature.details.DetailsViewModel
 import com.corgicoder.foodtruck.feature.home.HomeScreen
 import com.corgicoder.foodtruck.feature.home.HomeViewModel
 import com.corgicoder.foodtruck.navigation.NavGraph
@@ -42,6 +43,9 @@ class MainActivity : ComponentActivity() {
                             homeViewModel = HomeViewModel(
                                 filterRepository = FilterRepositoryImpl(),
                                 restaurantRepository = RestaurantRepositoryImpl()
+                            ),
+                            detailsViewModel = DetailsViewModel(
+                                repository = RestaurantRepositoryImpl()
                             )
 
                         )

@@ -14,6 +14,7 @@ import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
 import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
 import com.corgicoder.foodtruck.feature.details.DetailsScreen
+import com.corgicoder.foodtruck.feature.details.DetailsViewModel
 import com.corgicoder.foodtruck.feature.home.HomeScreen
 import com.corgicoder.foodtruck.feature.home.HomeViewModel
 
@@ -27,11 +28,11 @@ object Route {
 @Composable
 fun NavGraph (
     homeViewModel: HomeViewModel,
+    detailsViewModel: DetailsViewModel,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
     val restaurantRepository = RestaurantRepositoryImpl()
-    val filterRepository = FilterRepositoryImpl()
 
     NavHost(
         navController = navController,
@@ -39,7 +40,6 @@ fun NavGraph (
     ) {
         composable(Route.HOME) {
             HomeScreen(
-                //onFilterClick = {},
                 onRestaurantClick = { restaurant ->
                     navController.navigate(Route.createRestaurantDetailsRoute(restaurant.id))
 
@@ -55,22 +55,13 @@ fun NavGraph (
             ) { backStackEntry ->
                 val restaurantId = backStackEntry.arguments?.getString("restaurantId") ?: return@composable
 
-                // Get the selected restaurant from the ViewModel
-               /* val selectedRestaurant = homeViewModel.selectedRestaurant.collectAsState().value
-
-                if (selectedRestaurant != null && selectedRestaurant.id == restaurantId) {
                     DetailsScreen(
                         restaurantId = restaurantId,
                         repository = restaurantRepository,
                         onNavigateBack = { navController.popBackStack() },
-                        homeViewModel = homeViewModel,
+                        detailsViewModel = detailsViewModel,
                         showRating = false,
                     )
-                } else {
-                    Text("Error: Restaurant not found")
-                }
-
-                */
             }
         }
 }

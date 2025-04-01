@@ -23,65 +23,30 @@ import com.corgicoder.foodtruck.ui.components.card.Card
 @Composable
 fun DetailsScreen(
     restaurantId: String,
-    homeViewModel: HomeViewModel,
+    detailsViewModel: DetailsViewModel,
     repository: RestaurantRepository,
     onNavigateBack: () -> Unit,
     showRating: Boolean,
 ) {
 
-   val detailsViewModel: DetailsViewModel = viewModel(
-       factory = DetailsViewModelFactory(repository)
-   )
-/*
-    // Find the restaurant in the HomeViewModel's data
-    val restaurantsWithFilters = homeViewModel.restaurantsWithFilterNames.collectAsState().value
-    val restaurantWithFilters = restaurantsWithFilters.find { it.restaurant.id == restaurantId }
-
     // Collect open status from DetailsViewModel
-    val openStatus = detailsViewModel.openStatus.collectAsState()
-    val isLoadingStatus = detailsViewModel.isLoadingStatus.collectAsState()
-    val statusError = detailsViewModel.statusError.collectAsState()
 
-    println("OPEN STATUS: $openStatus")
+    val status = detailsViewModel.detailedState.collectAsState().value.openStatus?.isCurrentlyOpen
+    val restaurantDetails = detailsViewModel.detailedState.collectAsState().value.selectedRestaurant
+
+
 
 
     //fetch restaurant details
     LaunchedEffect(restaurantId) {
       detailsViewModel.fetchOpenStatus(restaurantId)
     }
-// This is redundant, restaurants should never = null
-    if (restaurantWithFilters == null) {
-        Box(modifier = Modifier.fillMaxSize()){
-            Row(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                BackButton(
-                    onNavigateBack = onNavigateBack,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("Restaurant not found")
-            }
-        }
-    } else {
-        Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(modifier = Modifier.padding(16.dp)) {
-                BackButton(
-                    onNavigateBack = onNavigateBack,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            }
+    Column {
+        Text(text = "$status")
+        Text(text = "$restaurantDetails")
     }
 
-        }
 
- */
 }
 
 

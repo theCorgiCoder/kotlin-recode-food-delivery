@@ -9,6 +9,7 @@ import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 interface RestaurantRepository {
     suspend fun getRestaurants(): Result<List<RestaurantData>>
     suspend fun getRestaurantStatus(restaurantId: String): Result<RestaurantOpenStatus>
+    suspend fun getRestaurantById(restaurantId: String): Result<RestaurantData>
 }
 
 class RestaurantRepositoryImpl : RestaurantRepository {
@@ -41,6 +42,24 @@ class RestaurantRepositoryImpl : RestaurantRepository {
         } catch (e: Exception) {
             Log.e("RestaurantRepository", "Exception: ${e.message}")
             Result.Error(e)
+        }
+    }
+
+    override suspend fun getRestaurantById(restaurantId: String): Result<RestaurantData> {
+        return when(val result = getRestaurants()) {
+            is Result.Success -> {
+                val restaurant = result.data.find { it.id == restaurantId}
+
+                if (restaurant != null) {
+                    Result.Success(restaurant)
+                } else {
+                    Result.Error(Exception("Restaurant with ID $restaurantId not found"))
+                }
+            }
+
+            is Result.Error -> {
+                Result.Error(Exception("Error loading restaurant $restaurantId not found"))
+            }
         }
     }
 }

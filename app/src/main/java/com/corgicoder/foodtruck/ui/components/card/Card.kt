@@ -82,8 +82,6 @@ fun Card (
                                 style = MaterialTheme.typography.headlineLarge,
                                 modifier = Modifier.weight(1f)
                             )
-
-                            if (showRating) {
                                 IconRow(
                                     rating = restaurant.rating,
                                     icon = IconType.ImageVectorIcon(Icons.Default.Star),
@@ -99,8 +97,6 @@ fun Card (
                         TagRow(filterNames = filters)
 
                         Spacer(modifier = Modifier.height(8.dp))
-
-                        if (showRating && restaurant.deliveryTimeMinutes != null) {
                             IconRow(
                                 icon = IconType.DrawableResourceIcon(R.drawable.clock_icon),
                                 iconTint = Color.Red,
@@ -109,15 +105,8 @@ fun Card (
                                 fontSize = 14.dp,
                                 text = "${restaurant.deliveryTimeMinutes} minutes"
                             )
-                        } else {
-                            Text(
-                                text = "Open Status:"
-                            )
-                        }
                     }
                 }
-            }
-
         }
 
 

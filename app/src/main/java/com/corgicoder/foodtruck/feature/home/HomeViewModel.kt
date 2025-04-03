@@ -7,11 +7,8 @@ import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.data.model.RestaurantWithFilterNames
 import com.corgicoder.foodtruck.data.repository.FilterRepository
 import com.corgicoder.foodtruck.data.repository.RestaurantRepository
+import com.corgicoder.foodtruck.data.utils.FilterUtils
 import com.corgicoder.foodtruck.data.utils.Result
-import com.corgicoder.foodtruck.feature.uiState.FilterState
-import com.corgicoder.foodtruck.feature.uiState.RestaurantDetailsState
-import com.corgicoder.foodtruck.feature.uiState.RestaurantListState
-import com.corgicoder.foodtruck.feature.uiState.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -111,8 +108,6 @@ class HomeViewModel (
                     ) }
                     Log.d("HomeViewModel", "Loaded ${filtersList.size} filters")
 
-                  //  applyCurrentFilter()
-
                     _uiState.update { it.copy(isLoading = false) }
                 }
                 is Result.Error -> {
@@ -123,9 +118,6 @@ class HomeViewModel (
                     Log.e("HomeViewModel", "Error loading filters", result.exception)
                 }
             }
-
-
-
         }
     }
 
@@ -133,7 +125,7 @@ class HomeViewModel (
         val restaurants = _restaurantState.value.allRestaurants
         val filterMap = _filterState.value.namedFilterIdsMap
         val selectedFilterIds = _filterState.value.selectedFilterIds
-        println(restaurants)
+
         val filteredList = if (selectedFilterIds.isEmpty()) {
             //when no filter is selected, show ALL restaurants
             restaurants
@@ -142,29 +134,25 @@ class HomeViewModel (
                 restaurant.filterIds.any { filterId -> filterId in selectedFilterIds}
              }
         }
-        println("FILTERED LIST: $filteredList")
 
         // Update the enhanced list with filter names
         val namedFilters = filteredList.map { restaurant ->
-            val filterNames = restaurant.filterIds.mapNotNull { id ->
-                filterMap[id]
-            }
-            println(filterNames)
+            val filterNames = FilterUtils.getFilterNamesForRestaurant(restaurant, filterMap)
             RestaurantWithFilterNames(restaurant, filterNames)
+            }
+            _restaurantState.update { it.copy(
+                restaurantsWithFilterNames = namedFilters
+            )
         }
-       _restaurantState.update { it.copy(
-           restaurantsWithFilterNames = namedFilters
-       ) }
     }
-
     fun filterByRestaurantFilterIds(filterId: String) {
         val currentSelectedFilter = _filterState.value.selectedFilterIds
         val updatedFilters = currentSelectedFilter.toMutableList()
 
         if (filterId in currentSelectedFilter) {
-       updatedFilters.remove(filterId)
+            updatedFilters.remove(filterId)
         } else {
-           updatedFilters.add(filterId)
+            updatedFilters.add(filterId)
         }
 
         _filterState.update { it.copy(
@@ -172,17 +160,16 @@ class HomeViewModel (
         )
 
         }
-        }
+    }
 
     // Helper methods
-
     fun selectedRestaurant(restaurant: RestaurantData) {
         _detailedState.update { it.copy(
             selectedRestaurant = restaurant
         ) }
     }
+}
 
-    }
 
 
 

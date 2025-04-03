@@ -1,4 +1,4 @@
-package com.corgicoder.foodtruck.feature.uiState
+package com.corgicoder.foodtruck.feature.home
 
 import com.corgicoder.foodtruck.data.model.FilterData
 import com.corgicoder.foodtruck.data.model.RestaurantData

@@ -45,7 +45,8 @@ class MainActivity : ComponentActivity() {
                                 restaurantRepository = RestaurantRepositoryImpl()
                             ),
                             detailsViewModel = DetailsViewModel(
-                                repository = RestaurantRepositoryImpl()
+                                repository = RestaurantRepositoryImpl(),
+                                filterRepository = FilterRepositoryImpl()
                             )
 
                         )

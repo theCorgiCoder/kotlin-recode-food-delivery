@@ -60,7 +60,6 @@ fun NavGraph (
                         repository = restaurantRepository,
                         onNavigateBack = { navController.popBackStack() },
                         detailsViewModel = detailsViewModel,
-                        showRating = false,
                     )
             }
         }

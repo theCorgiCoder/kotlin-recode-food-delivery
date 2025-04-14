@@ -41,6 +41,7 @@ fun DetailsScreen(
     val openStatus = detailsViewModel.openStatus.collectAsState()
     val isLoadingStatus = detailsViewModel.isLoadingStatus.collectAsState()
     val statusError = detailsViewModel.statusError.collectAsState()
+    //clone test
 
     println("OPEN STATUS: $openStatus")
 

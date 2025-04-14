@@ -29,7 +29,6 @@ object Route {
 fun NavGraph (
     homeViewModel: HomeViewModel,
     detailsViewModel: DetailsViewModel,
-    modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
     val restaurantRepository = RestaurantRepositoryImpl()
@@ -57,7 +56,6 @@ fun NavGraph (
 
                     DetailsScreen(
                         restaurantId = restaurantId,
-                        repository = restaurantRepository,
                         onNavigateBack = { navController.popBackStack() },
                         detailsViewModel = detailsViewModel,
                     )

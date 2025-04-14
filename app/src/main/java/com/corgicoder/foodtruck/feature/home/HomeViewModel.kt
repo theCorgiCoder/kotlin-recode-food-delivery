@@ -20,7 +20,7 @@ class HomeViewModel (
     private val restaurantRepository: RestaurantRepository,
     private val filterRepository: FilterRepository
 ) : ViewModel() {
-
+//Consider changing from loading boolean to has data loaded
     //Error and Loading Ui state flows
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
@@ -40,6 +40,7 @@ class HomeViewModel (
     init {
         // Set up automatic filtering when selectedFilterId changes
         viewModelScope.launch {
+
             _filterState
                 .map { it.selectedFilterIds }
                 .collect{
@@ -51,9 +52,6 @@ class HomeViewModel (
     }
 
     fun loadRestaurants() {
-        if (_uiState.value.isLoading) {
-            return
-        }
 
         viewModelScope.launch {
             // Update loading state
@@ -67,6 +65,7 @@ class HomeViewModel (
                   val restaurants = result.data
                   //Update state
                   _restaurantState.update { it.copy(allRestaurants = restaurants) }
+                println("HVM: ${uiState.value.isLoading}")
 
                   if (restaurants.isNotEmpty()) {
                      loadFilters(restaurants)
@@ -106,9 +105,10 @@ class HomeViewModel (
                         filters = filtersList,
                         namedFilterIdsMap = mappingIds
                     ) }
-                    Log.d("HomeViewModel", "Loaded ${filtersList.size} filters")
+
 
                     _uiState.update { it.copy(isLoading = false) }
+                    Log.d("HomeViewModel", "After Filters Load: ${ uiState.value.isLoading }")
                 }
                 is Result.Error -> {
                     _uiState.update { it.copy(

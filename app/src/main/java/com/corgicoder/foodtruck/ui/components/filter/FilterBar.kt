@@ -14,10 +14,11 @@ fun FilterBar(
     filters: List<FilterData>,
     selectedFilterIds: List<String?>,
     onFilterToggled: (String) -> Unit,
+    modifier: Modifier,
     viewModel: HomeViewModel
 ) {
     LazyRow (
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ){
        items(filters.size) { index ->

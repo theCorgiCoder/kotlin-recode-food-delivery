@@ -31,10 +31,6 @@ class DetailsViewModel (
 
     fun fetchRestaurantById(restaurantId: String) {
 
-        if (_uiState.value.isLoading) {
-            return
-        }
-
         viewModelScope.launch {
 
             _uiState.update { it.copy(isLoading = true, error = null) }
@@ -113,13 +109,11 @@ class DetailsViewModel (
                         namedFilterIdsMap = mappingIds
                     ) }
 
-                    // If we already have restaurant data, update the filter names
+                    // We already have restaurant data, update the filter names
                     _detailedState.value.selectedRestaurant?.let { restaurant ->
                         val filterNames = FilterUtils.getFilterNamesForRestaurant(restaurant, mappingIds)
 
                        _detailedState.update { it.copy(namedFilters = filterNames) }
-                        println("Filter NAMES: ${detailedState.value.namedFilters}")
-
                     }
 
                     println("Filter map: $mappingIds")

@@ -14,8 +14,8 @@ import com.corgicoder.foodtruck.R
 
 @Composable
 fun Header(modifier: Modifier = Modifier){
-    Column (modifier = Modifier) {
-        Row (modifier = modifier.padding(vertical = 16.dp)){
+
+        Row (modifier = Modifier.padding(16.dp)){
             Image(
                 painter = painterResource(R.drawable.umain_logo),
                 contentDescription = "Image of umain logo",
@@ -23,6 +23,5 @@ fun Header(modifier: Modifier = Modifier){
                 alignment = Alignment.TopStart
             )
         }
-    }
 
 }

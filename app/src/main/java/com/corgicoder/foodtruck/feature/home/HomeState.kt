@@ -6,7 +6,7 @@ import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
 import com.corgicoder.foodtruck.data.model.RestaurantWithFilterNames
 
 data class UiState(
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val error: String? = null
 )
 

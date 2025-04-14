@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth(),
                     color = Color(0xFFF8F8F8)
                 ){
-                    Box( modifier = Modifier) {
+
                         NavGraph(
                             homeViewModel = HomeViewModel(
                                 filterRepository = FilterRepositoryImpl(),
@@ -48,14 +48,13 @@ class MainActivity : ComponentActivity() {
                                 repository = RestaurantRepositoryImpl(),
                                 filterRepository = FilterRepositoryImpl()
                             )
-
                         )
-                    }
-            }
-        }
+                    
+                }
             }
         }
     }
+}
 
 
 

@@ -71,7 +71,7 @@ This project is licensed under the MIT License.
 
 ### Mobile Developer: [Elaine Bergström](https://se.linkedin.com/in/elaine-bergstrom)
 
-### Honorary Dog-veloper: Alfie Bergström
+### Honorary Dog-veloper: [Alfie Bergström](https://avatars.githubusercontent.com/u/91662745?v=4)
 
 If you have any questions or feedback please feel free to reach out to me here:
 

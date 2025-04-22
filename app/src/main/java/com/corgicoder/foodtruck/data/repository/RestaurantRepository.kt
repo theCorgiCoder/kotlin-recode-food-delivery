@@ -1,10 +1,10 @@
 package com.corgicoder.foodtruck.data.repository
 
 import android.util.Log
-import com.corgicoder.foodtruck.data.utils.Result
 import com.corgicoder.foodtruck.data.api.RetrofitClient
 import com.corgicoder.foodtruck.data.model.RestaurantData
 import com.corgicoder.foodtruck.data.model.RestaurantOpenStatus
+import com.corgicoder.foodtruck.data.utils.Result
 
 interface RestaurantRepository {
     suspend fun getRestaurants(): Result<List<RestaurantData>>

@@ -25,6 +25,7 @@ import com.corgicoder.foodtruck.feature.details.DetailsViewModel
 import com.corgicoder.foodtruck.feature.home.HomeScreen
 import com.corgicoder.foodtruck.feature.home.HomeViewModel
 import com.corgicoder.foodtruck.navigation.NavGraph
+import com.corgicoder.foodtruck.ui.theme.Background
 import com.corgicoder.foodtruck.ui.theme.FoodTruckTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                 Surface (
                     modifier = Modifier
                         .fillMaxWidth(),
-                    color = Color(0xFFF8F8F8)
+                    color = Background
                 ){
                         NavGraph()
                 }

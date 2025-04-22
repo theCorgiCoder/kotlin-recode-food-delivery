@@ -1,6 +1,5 @@
 package com.corgicoder.foodtruck.ui.components.icon
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon

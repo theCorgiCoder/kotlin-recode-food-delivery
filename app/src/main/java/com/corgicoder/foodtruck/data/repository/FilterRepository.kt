@@ -54,6 +54,7 @@ class FilterRepositoryImpl() : FilterRepository {
 
             for (filterId in filterIds) {
                 when (val result = getFilterById(filterId)) {
+
                     is Result.Success -> filters.add(result.data)
                     is Result.Error -> {
                         Log.e("FilterRespository", "Failed to fetch filter $filterId: ${result.exception.message}")

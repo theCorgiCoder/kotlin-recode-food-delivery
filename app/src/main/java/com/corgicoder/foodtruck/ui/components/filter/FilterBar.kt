@@ -1,24 +1,22 @@
 package com.corgicoder.foodtruck.ui.components.filter
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.corgicoder.foodtruck.data.model.FilterData
-import com.corgicoder.foodtruck.feature.home.HomeViewModel
 
 @Composable
 fun FilterBar(
     filters: List<FilterData>,
     selectedFilterIds: List<String?>,
     onFilterToggled: (String) -> Unit,
-    viewModel: HomeViewModel
+    modifier: Modifier,
 ) {
     LazyRow (
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ){
        items(filters.size) { index ->
            val filter = filters[index]

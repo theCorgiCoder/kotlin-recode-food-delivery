@@ -1,5 +1,6 @@
 package com.corgicoder.foodtruck.feature.details
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,87 +8,97 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.corgicoder.foodtruck.data.repository.RestaurantRepository
-import com.corgicoder.foodtruck.feature.home.HomeViewModel
+import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
+import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
 import com.corgicoder.foodtruck.ui.components.button.BackButton
-import com.corgicoder.foodtruck.ui.components.cardInfo.CardInfo
+import com.corgicoder.foodtruck.ui.components.card.DetailsCard
+
 
 @Composable
 fun DetailsScreen(
     restaurantId: String,
-    homeViewModel: HomeViewModel,
-    repository: RestaurantRepository,
     onNavigateBack: () -> Unit,
-    showRating: Boolean,
 ) {
 
-   val detailsViewModel: DetailsViewModel = viewModel(
-       factory = DetailsViewModelFactory(repository)
-   )
+    val detailsViewModel: DetailsViewModel = viewModel {
+        DetailsViewModel(
+            repository = RestaurantRepositoryImpl(),
+            filterRepository = FilterRepositoryImpl()
+        )
+    }
 
-    // Find the restaurant in the HomeViewModel's data
-    val restaurantsWithFilters = homeViewModel.restaurantsWithFilterNames.collectAsState().value
-    val restaurantWithFilters = restaurantsWithFilters.find { it.restaurant.id == restaurantId }
-
-    // Collect open status from DetailsViewModel
-    val openStatus = detailsViewModel.openStatus.collectAsState()
-    val isLoadingStatus = detailsViewModel.isLoadingStatus.collectAsState()
-    val statusError = detailsViewModel.statusError.collectAsState()
-    //clone test
-
-    println("OPEN STATUS: $openStatus")
-
+    val status = detailsViewModel.detailedState.collectAsState().value.openStatus?.isCurrentlyOpen
+    val restaurantDetails = detailsViewModel.detailedState.collectAsState().value.selectedRestaurant
+    val uiState = detailsViewModel.uiState.collectAsState()
+    val namedFilters = detailsViewModel.detailedState.collectAsState().value.namedFilters
 
     //fetch restaurant details
     LaunchedEffect(restaurantId) {
-      detailsViewModel.fetchOpenStatus(restaurantId)
+        detailsViewModel.fetchRestaurantById(restaurantId)
     }
-// This is redundant, restaurants should never = null
-    if (restaurantWithFilters == null) {
-        Box(modifier = Modifier.fillMaxSize()){
-            Row(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                BackButton(
-                    onNavigateBack = onNavigateBack,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+    ) {
+
+        when {
+            uiState.value.isLoading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Restaurant not found")
             }
-        }
-    } else {
-        Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(modifier = Modifier.padding(16.dp)) {
-                BackButton(
-                    onNavigateBack = onNavigateBack,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
+
+            uiState.value.error != null -> {
+                Log.d("DetailsScreen", "Showing error: ${uiState.value.error}")
+
             }
-            CardInfo(
-                restaurantId = restaurantWithFilters.restaurant.id,
-                restaurant = restaurantWithFilters.restaurant,
-                filters = restaurantWithFilters.filterNames,
-                showRating = true
-            )
+
+            else -> {
+                Box{
+                    BackButton(
+                        onNavigateBack = onNavigateBack,
+                        modifier = Modifier
+                            .padding(
+                                top = 32.dp,
+                                bottom = 16.dp,
+                                start = 16.dp,
+                                end = 16.dp)
+                            .zIndex(1f),
+                    )
+
+                    restaurantDetails?.let { restaurant ->
+
+                        DetailsCard(
+                            restaurant = restaurant,
+                            filters = namedFilters,
+                            openStatus = status ?: false,
+                            modifier = Modifier.zIndex(0f)
+                        )
+                    } ?: run {
+                        Log.d("DetailsScreen", "Showing error: ${uiState.value.error}")
+                    }
+                    }
+
+
+                }
+
+            }
+        }
     }
 
-        }
-}
+
+
 
 
 

@@ -1,95 +1,100 @@
 package com.corgicoder.foodtruck.feature.home
 
-import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corgicoder.foodtruck.data.model.RestaurantData
-import com.corgicoder.foodtruck.ui.components.card.Card
+import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
+import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
+import com.corgicoder.foodtruck.ui.components.card.RestaurantCard
 import com.corgicoder.foodtruck.ui.components.filter.FilterBar
 import com.corgicoder.foodtruck.ui.components.header.Header
 
 @Composable
 fun HomeScreen(
     onRestaurantClick: (RestaurantData) -> Unit,
-    viewModel: HomeViewModel
 ) {
+
+    val viewModel: HomeViewModel = viewModel {
+        HomeViewModel(
+            filterRepository = FilterRepositoryImpl(),
+            restaurantRepository = RestaurantRepositoryImpl()
+        )
+    }
+
+    val selectedFilterIds = viewModel.filterState.collectAsState()
+    val restaurantsWithFilters = viewModel.restaurantState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
             viewModel.loadRestaurants()
     }
 
-    val filters = viewModel.filters.collectAsState()
-    val selectedFilterIds = viewModel.selectedFilterIds.collectAsState()
-    val restaurantsWithFilters = viewModel.restaurantsWithFilterNames.collectAsState()
+    if (uiState.value.isLoading) {
+        Box(modifier = Modifier.fillMaxSize()){
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center)
+        )}
 
-    val isLoading = viewModel.isLoading.collectAsState()
+    } else {
+    Scaffold (
+        modifier = Modifier.background(Color.Black),
+        content = { paddingValues ->
+            Column (
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ){
+                        Column (
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ){
 
-    val errorState = viewModel.error.collectAsState(initial = null)
-    val errorValue = errorState.value
+                            Header(modifier = Modifier)
 
-    Box(modifier = Modifier.fillMaxSize()
-    ) {
-        when { isLoading.value -> {
-             Log.d("HomeScreen", "Showing loading indicator")
-          CircularProgressIndicator(
-                 modifier = Modifier.align(Alignment.Center)
-             )
-        }
-            errorValue != null -> {
-                Log.d("HomeScreen", "Showing error: $errorValue")
-
-            }
-            else -> {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.padding(top = 40.dp))
-                Header(modifier = Modifier
-                    .padding(vertical = 16.dp)
-                    .zIndex(1f)
-                )
-                Box(modifier = Modifier.zIndex(0f)) {
-                  Row {
-                        FilterBar(
-                            filters = filters.value,
-                            selectedFilterIds = selectedFilterIds.value,
-                            onFilterToggled = { filterId ->
-                                println("Filter Toggled")
+                            FilterBar(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                filters = selectedFilterIds.value.filters,
+                                selectedFilterIds = selectedFilterIds.value.selectedFilterIds,
+                                onFilterToggled = { filterId ->
                                     viewModel.filterByRestaurantFilterIds(filterId)
-                            },
-                            viewModel = viewModel
-                       )
-                    }
-                    Log.d("HomeScreen", "Showing restaurant list")
-                    LazyColumn (modifier = Modifier
-                        .padding(vertical = 40.dp)
-                    ){
-                        items(restaurantsWithFilters.value) { restaurantWithFilters ->
-                            Card(
-                                restaurant = restaurantWithFilters.restaurant,
-                                filters = restaurantWithFilters.filterNames,
-                                showRating = true,
-                                onRestaurantClick = { onRestaurantClick(restaurantWithFilters.restaurant) }
-                            )
+                                }
+                            ) }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                        ) {
+                           items(restaurantsWithFilters.value.restaurantsWithFilterNames) { restaurantWithFilters ->
+                                RestaurantCard(
+                                    restaurant = restaurantWithFilters.restaurant,
+                                    filters = restaurantWithFilters.filterNames,
+                                    onRestaurantClick = { onRestaurantClick(restaurantWithFilters.restaurant) },
+                                )
+                            }
                         }
                     }
-                }
-            }
+            })
         }
-    }
-    }
 }
+
 
 

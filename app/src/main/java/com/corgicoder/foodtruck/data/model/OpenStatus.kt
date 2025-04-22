@@ -1,6 +1,5 @@
 package com.corgicoder.foodtruck.data.model
 
-import androidx.compose.runtime.MutableState
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

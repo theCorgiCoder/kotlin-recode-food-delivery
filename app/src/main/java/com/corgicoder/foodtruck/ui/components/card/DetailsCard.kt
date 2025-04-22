@@ -44,7 +44,7 @@ fun DetailsCard (
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.25f),
+                .fillMaxHeight(0.3f),
             alignment = Alignment.TopStart
         )
         Box (
@@ -54,7 +54,7 @@ fun DetailsCard (
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .offset(y = (LocalConfiguration.current.screenHeightDp.dp * 0.25f) - 40.dp),
+                    .offset(y = (LocalConfiguration.current.screenHeightDp.dp * 0.3f) - 40.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {

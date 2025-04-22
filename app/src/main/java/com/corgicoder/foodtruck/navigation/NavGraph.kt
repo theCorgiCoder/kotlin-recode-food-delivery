@@ -27,11 +27,8 @@ object Route {
 
 @Composable
 fun NavGraph (
-    homeViewModel: HomeViewModel,
-    detailsViewModel: DetailsViewModel,
 ) {
     val navController = rememberNavController()
-    val restaurantRepository = RestaurantRepositoryImpl()
 
     NavHost(
         navController = navController,
@@ -41,11 +38,7 @@ fun NavGraph (
             HomeScreen(
                 onRestaurantClick = { restaurant ->
                     navController.navigate(Route.createRestaurantDetailsRoute(restaurant.id))
-
-                    // Store the selected restaurant in the ViewModel
-                homeViewModel.selectedRestaurant(restaurant)
                 },
-                viewModel = homeViewModel
             )
         }
             composable (
@@ -57,7 +50,6 @@ fun NavGraph (
                     DetailsScreen(
                         restaurantId = restaurantId,
                         onNavigateBack = { navController.popBackStack() },
-                        detailsViewModel = detailsViewModel,
                     )
             }
         }

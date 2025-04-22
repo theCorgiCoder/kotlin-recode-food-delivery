@@ -21,7 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corgicoder.foodtruck.data.model.RestaurantData
+import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
+import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
 import com.corgicoder.foodtruck.ui.components.card.RestaurantCard
 import com.corgicoder.foodtruck.ui.components.filter.FilterBar
 import com.corgicoder.foodtruck.ui.components.header.Header
@@ -29,12 +32,19 @@ import com.corgicoder.foodtruck.ui.components.header.Header
 @Composable
 fun HomeScreen(
     onRestaurantClick: (RestaurantData) -> Unit,
-    viewModel: HomeViewModel
 ) {
+
+    val viewModel: HomeViewModel = viewModel {
+        HomeViewModel(
+            filterRepository = FilterRepositoryImpl(),
+            restaurantRepository = RestaurantRepositoryImpl()
+        )
+    }
+
     val selectedFilterIds = viewModel.filterState.collectAsState()
     val restaurantsWithFilters = viewModel.restaurantState.collectAsState()
     val uiState = viewModel.uiState.collectAsState()
-
+//Unit launches only once, look into this more
     LaunchedEffect(Unit) {
             viewModel.loadRestaurants()
     }

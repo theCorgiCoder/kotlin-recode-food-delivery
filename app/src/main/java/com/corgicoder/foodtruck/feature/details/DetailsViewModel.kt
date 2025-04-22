@@ -45,7 +45,6 @@ class DetailsViewModel (
                         openStatus = status
                     ) }
 
-                    _uiState.update { it.copy(isLoading = false, error = null) }
                 }
 
                 is Result.Error -> {
@@ -76,9 +75,6 @@ class DetailsViewModel (
                             error = "No Data Available"
                         ) }
                     }
-
-                    _uiState.update { it.copy(isLoading = false, error = null) }
-
                 }
 
                 is Result.Error -> {

@@ -38,18 +38,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth(),
                     color = Color(0xFFF8F8F8)
                 ){
-
-                        NavGraph(
-                            homeViewModel = HomeViewModel(
-                                filterRepository = FilterRepositoryImpl(),
-                                restaurantRepository = RestaurantRepositoryImpl()
-                            ),
-                            detailsViewModel = DetailsViewModel(
-                                repository = RestaurantRepositoryImpl(),
-                                filterRepository = FilterRepositoryImpl()
-                            )
-                        )
-                    
+                        NavGraph()
                 }
             }
         }

@@ -91,7 +91,7 @@ fun RestaurantCard (
                         text = restaurant.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif,
+                        fontFamily = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.weight(1f)
                     )
                     IconRow(

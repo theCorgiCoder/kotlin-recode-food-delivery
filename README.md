@@ -1,4 +1,4 @@
-WIP
+
 # Food Delivery the Recode!
 
 Welcome! This is a re-engineering of my Food Delivery App build using [Kotlin](https://kotlinlang.org) 

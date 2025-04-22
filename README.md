@@ -75,4 +75,4 @@ This project is licensed under the MIT License.
 
 If you have any questions or feedback please feel free to reach out to me here:
 
-📧 **Email:** [elainebergstrom26@gmail.com](elainebergstrom26@gmail.com)
+📧 **Email:** [Contact Me](elainebergstrom26@gmail.com)

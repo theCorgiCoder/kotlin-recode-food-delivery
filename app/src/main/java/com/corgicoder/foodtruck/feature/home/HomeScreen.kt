@@ -3,11 +3,8 @@ package com.corgicoder.foodtruck.feature.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corgicoder.foodtruck.data.model.RestaurantData
+import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
+import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
 import com.corgicoder.foodtruck.ui.components.card.RestaurantCard
 import com.corgicoder.foodtruck.ui.components.filter.FilterBar
 import com.corgicoder.foodtruck.ui.components.header.Header
@@ -29,8 +28,15 @@ import com.corgicoder.foodtruck.ui.components.header.Header
 @Composable
 fun HomeScreen(
     onRestaurantClick: (RestaurantData) -> Unit,
-    viewModel: HomeViewModel
 ) {
+
+    val viewModel: HomeViewModel = viewModel {
+        HomeViewModel(
+            filterRepository = FilterRepositoryImpl(),
+            restaurantRepository = RestaurantRepositoryImpl()
+        )
+    }
+
     val selectedFilterIds = viewModel.filterState.collectAsState()
     val restaurantsWithFilters = viewModel.restaurantState.collectAsState()
     val uiState = viewModel.uiState.collectAsState()
@@ -47,7 +53,7 @@ fun HomeScreen(
 
     } else {
     Scaffold (
-        modifier = Modifier.background(Color(0xFFF8F8F8)),
+        modifier = Modifier.background(Color.Black),
         content = { paddingValues ->
             Column (
                 modifier = Modifier
@@ -56,20 +62,20 @@ fun HomeScreen(
             ){
                         Column (
                             modifier = Modifier
-                                .padding(16.dp)
                                 .fillMaxWidth()
                         ){
 
                             Header(modifier = Modifier)
 
                             FilterBar(
-                                modifier = Modifier,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
                                 filters = selectedFilterIds.value.filters,
                                 selectedFilterIds = selectedFilterIds.value.selectedFilterIds,
                                 onFilterToggled = { filterId ->
                                     viewModel.filterByRestaurantFilterIds(filterId)
-                                },
-                                viewModel = viewModel
+                                }
                             ) }
 
                         LazyColumn(
@@ -77,7 +83,7 @@ fun HomeScreen(
                                 .fillMaxSize()
                                 .padding(16.dp),
                         ) {
-                            items(restaurantsWithFilters.value.restaurantsWithFilterNames) { restaurantWithFilters ->
+                           items(restaurantsWithFilters.value.restaurantsWithFilterNames) { restaurantWithFilters ->
                                 RestaurantCard(
                                     restaurant = restaurantWithFilters.restaurant,
                                     filters = restaurantWithFilters.filterNames,

@@ -42,12 +42,14 @@ google-services.json
 
 # OS-specific files
 .DS_Store
-.DS_Store?
-._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
+**/.DS_Store
+*.bin
+/.idea
+/.gradle
 
 # Log Files
 *.log

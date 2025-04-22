@@ -1,7 +1,6 @@
 package com.corgicoder.foodtruck.feature.details
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,10 +10,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.corgicoder.foodtruck.data.repository.RestaurantRepository
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.corgicoder.foodtruck.data.repository.FilterRepositoryImpl
+import com.corgicoder.foodtruck.data.repository.RestaurantRepositoryImpl
 import com.corgicoder.foodtruck.ui.components.button.BackButton
 import com.corgicoder.foodtruck.ui.components.card.DetailsCard
 
@@ -22,11 +22,15 @@ import com.corgicoder.foodtruck.ui.components.card.DetailsCard
 @Composable
 fun DetailsScreen(
     restaurantId: String,
-    detailsViewModel: DetailsViewModel,
     onNavigateBack: () -> Unit,
 ) {
 
-    // Collect open status from DetailsViewModel
+    val detailsViewModel: DetailsViewModel = viewModel {
+        DetailsViewModel(
+            repository = RestaurantRepositoryImpl(),
+            filterRepository = FilterRepositoryImpl()
+        )
+    }
 
     val status = detailsViewModel.detailedState.collectAsState().value.openStatus?.isCurrentlyOpen
     val restaurantDetails = detailsViewModel.detailedState.collectAsState().value.selectedRestaurant
@@ -56,11 +60,14 @@ fun DetailsScreen(
 
             else -> {
                 Box{
-
                     BackButton(
                         onNavigateBack = onNavigateBack,
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(
+                                top = 32.dp,
+                                bottom = 16.dp,
+                                start = 16.dp,
+                                end = 16.dp)
                             .zIndex(1f),
                     )
 

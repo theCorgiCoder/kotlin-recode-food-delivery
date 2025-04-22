@@ -2,13 +2,14 @@ package com.corgicoder.foodtruck.ui.components.filter
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.corgicoder.foodtruck.ui.theme.SubtitleText
 
 @Composable
 fun FiltersRow(
@@ -17,8 +18,6 @@ fun FiltersRow(
 ) {
 
     if (filters.isEmpty()) return
-
-    val textStyle = MaterialTheme.typography.bodySmall
 
     val text = buildAnnotatedString {
         filters.forEachIndexed { index, filter ->
@@ -29,13 +28,14 @@ fun FiltersRow(
         }
     }
 
-    BasicText(
+    Text(
         text = text,
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        style = textStyle,
+        style = MaterialTheme.typography.titleSmall,
         maxLines = 2,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        color = SubtitleText,
     )
 }

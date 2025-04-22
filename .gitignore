@@ -33,6 +33,18 @@ captures/
 .externalNativeBuild/
 .cxx/
 output.json
+*.iml
+*.iws
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/navEditor.xml
 
 # Log file
 *.log
@@ -55,3 +67,10 @@ output.json
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# macOS
+**/.DS_Store
+*.bin
+.DS_Store
+/.idea
+/.gradle

@@ -16,6 +16,7 @@ class RestaurantRepositoryImpl : RestaurantRepository {
     private val apiService = RetrofitClient.restaurantAPIService
 
     override suspend fun getRestaurants(): Result<List<RestaurantData>> {
+
         return try {
             val response = apiService.getRestaurants()
             if (response.isSuccessful) {

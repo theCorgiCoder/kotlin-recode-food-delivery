@@ -99,7 +99,7 @@ class DetailsViewModel (
                     val filtersList = result.data
                     // Create mapping from filter ID to filter name
                     val mappingIds = filtersList.associate { filter -> filter.id to filter.name }
-                    println("Filter map size: ${mappingIds.size}")
+
                     _filterState.update { it.copy(
                         filters = filtersList,
                         namedFilterIdsMap = mappingIds
@@ -112,7 +112,6 @@ class DetailsViewModel (
                        _detailedState.update { it.copy(namedFilters = filterNames) }
                     }
 
-                    println("Filter map: $mappingIds")
                     _uiState.update { it.copy(isLoading = false) }
                 }
 

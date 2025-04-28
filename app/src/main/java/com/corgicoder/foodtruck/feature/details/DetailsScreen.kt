@@ -62,7 +62,6 @@ fun DetailsScreen(
 
             uiState.value.error != null -> {
                 Log.d("DetailsScreen", "Showing error: ${uiState.value.error}")
-
             }
 
             else -> {

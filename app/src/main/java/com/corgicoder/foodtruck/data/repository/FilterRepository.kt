@@ -31,13 +31,13 @@ class FilterRepositoryImpl() : FilterRepository {
     }
 
     override suspend fun getAllFilters(): Result<List<FilterData>> {
+
         return try {
             // Fetch restaurants to extract filter IDs
             val restaurantResponse = apiService.getRestaurants()
 
             if(!restaurantResponse.isSuccessful) {
-                Log.e("FilterRepository", "Failed to fetch restaurants: ${restaurantResponse.code()}")
-                return Result.Error(Exception("Failes to fetch restaurants: ${restaurantResponse.code()}"))
+                return Result.Error(Exception("Failed to fetch restaurants: ${restaurantResponse.code()}"))
             }
 
             val restaurants = restaurantResponse.body()?.restaurants ?: emptyList()

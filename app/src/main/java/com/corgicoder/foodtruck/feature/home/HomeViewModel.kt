@@ -57,15 +57,12 @@ class HomeViewModel (
             // Update loading state
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            Log.d("HomeViewModel", "Loading restaurants started")
-
           when (val result = restaurantRepository.getRestaurants()) {
               is Result.Success -> {
 
                   val restaurants = result.data
                   //Update state
                   _restaurantState.update { it.copy(allRestaurants = restaurants) }
-                println("HVM: ${uiState.value.isLoading}")
 
                   if (restaurants.isNotEmpty()) {
                      loadFilters(restaurants)
@@ -94,7 +91,7 @@ class HomeViewModel (
 
     private fun loadFilters(restaurants: List<RestaurantData>) {
         viewModelScope.launch {
-            Log.d("HomeViewModel", "Loading filters started")
+
             when (val result = filterRepository.getAllFilters()) {
                 is Result.Success -> {
                     val filtersList = result.data
@@ -108,7 +105,6 @@ class HomeViewModel (
 
 
                     _uiState.update { it.copy(isLoading = false) }
-                    Log.d("HomeViewModel", "After Filters Load: ${ uiState.value.isLoading }")
                 }
                 is Result.Error -> {
                     _uiState.update { it.copy(
@@ -162,12 +158,6 @@ class HomeViewModel (
         }
     }
 
-    // Helper methods
-    fun selectedRestaurant(restaurant: RestaurantData) {
-        _detailedState.update { it.copy(
-            selectedRestaurant = restaurant
-        ) }
-    }
 }
 
 

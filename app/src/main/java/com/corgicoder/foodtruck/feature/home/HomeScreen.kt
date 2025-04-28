@@ -41,8 +41,9 @@ fun HomeScreen(
     val restaurantsWithFilters = viewModel.restaurantState.collectAsState()
     val uiState = viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = true) {
             viewModel.loadRestaurants()
+        println("HOME LOAD RESTAURANTS")
     }
 
     if (uiState.value.isLoading) {
